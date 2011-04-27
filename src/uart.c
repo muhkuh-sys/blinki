@@ -17,10 +17,12 @@
 typedef struct
 {
 	HOSTADEF(UART) * const ptArea;
+#if ASIC_TYP==10 || ASIC_TYP==50
 	MMIO_CFG_T tMmioRx;
 	MMIO_CFG_T tMmioTx;
 	MMIO_CFG_T tMmioRts;
 	MMIO_CFG_T tMmioCts;
+#endif
 } UART_INSTANCE_T;
 
 
@@ -66,6 +68,18 @@ static const UART_INSTANCE_T atUartInstances[] =
 		MMIO_CFG_uart2_rts,
 		MMIO_CFG_uart2_cts
 	}
+#elif ASIC_TYP==500 || ASIC_TYP==100
+	{
+		(NX500_UART_AREA_T * const)Addr_NX500_uart0
+	},
+
+	{
+		(NX500_UART_AREA_T * const)Addr_NX500_uart1
+	},
+
+	{
+		(NX500_UART_AREA_T * const)Addr_NX500_uart2
+	}
 #endif
 };
 
@@ -75,6 +89,9 @@ int uart_init(unsigned int uiUartUnit, const UART_CONFIGURATION_T *ptCfg)
 	unsigned long ulValue;
 	HOSTADEF(UART) *ptUartArea;
 	int iResult;
+#if ASIC_TYP==100 || ASIC_TYP==500
+	unsigned int uiIdx;
+#endif
 
 
 	/* expect error */
@@ -110,17 +127,27 @@ int uart_init(unsigned int uiUartUnit, const UART_CONFIGURATION_T *ptCfg)
 		/* enable the uart */
 		ptUartArea->ulUartcr = HOSTMSK(uartcr_uartEN);
 
+#if ASIC_TYP==10 || ASIC_TYP==50
 		/* setup the MMIO pins */
 		ptAsicCtrlArea->ulAsic_ctrl_access_key = ptAsicCtrlArea->ulAsic_ctrl_access_key;
 		ptMmioCtrlArea->aulMmio_cfg[ptCfg->uc_rx_mmio] = atUartInstances[uiUartUnit].tMmioRx;
+#endif
 
 		/* enable the drivers */
 		ulValue = HOSTMSK(uartdrvout_DRVTX);
 		ptUartArea->ulUartdrvout = ulValue;
 
+#if ASIC_TYP==10 || ASIC_TYP==50
 		/* setup the MMIO pins */
 		ptAsicCtrlArea->ulAsic_ctrl_access_key = ptAsicCtrlArea->ulAsic_ctrl_access_key;
 		ptMmioCtrlArea->aulMmio_cfg[ptCfg->uc_tx_mmio] = atUartInstances[uiUartUnit].tMmioTx;
+#elif ASIC_TYP==100 || ASIC_TYP==500
+		uiIdx = uiUartUnit << 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+0] = 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+1] = 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+2] = 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+3] = 2;
+#endif
 
 		iResult = 0;
 	}
@@ -128,26 +155,6 @@ int uart_init(unsigned int uiUartUnit, const UART_CONFIGURATION_T *ptCfg)
 	return iResult;
 }
 
-#if 0
-void uart_init_transfer(CONSOLE_DEVICE_SPECIFIC_DATA_T *ptData)
-{
-	unsigned long ulValue;
-	unsigned long ulMode;
-	int fUseRtsCts;
-	HOSTADEF(UART) *ptUartArea;
-	UART_CONFIGURATION_T *ptCfg;
-	unsigned int uiUartUnit;
-
-
-	/* get the uart area */
-	ptUartArea = ptData->tUart.ptUartArea;
-	/* get the uart instance */
-	uiUartUnit = ptData->tUart.uiUnit;
-	/* get the config */
-	ptCfg = g_t_romloader_options.at_uart + uiUartUnit;
-
-}
-#endif
 
 void uart_put(unsigned int uiUartUnit, unsigned char ucChar)
 {
@@ -250,12 +257,23 @@ unsigned int uart_peek(unsigned int uiUartUnit)
 void uart_close(unsigned int uiUartUnit)
 {
 	HOSTADEF(UART) *ptUartArea;
+#if ASIC_TYP==100 || ASIC_TYP==500
+	unsigned int uiIdx;
+#endif
 
 
 	if( uiUartUnit<ARRAYSIZE(atUartInstances) )
 	{
 		/* flush the buffer */
 		uart_flush(uiUartUnit);
+
+#if ASIC_TYP==100 || ASIC_TYP==500
+		uiIdx = uiUartUnit << 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+0] = 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+1] = 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+2] = 2;
+		ptGpioArea->aulGpio_cfg[uiIdx+3] = 2;
+#endif
 
 		/* get the uart area */
 		ptUartArea = atUartInstances[uiUartUnit].ptArea;
