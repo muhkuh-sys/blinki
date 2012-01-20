@@ -98,8 +98,8 @@ env_netx10_intram.Replace(LDFILE = 'src/netx10/netx10_intram.ld')
 src_netx10_intram = env_netx10_intram.SetBuildPath('targets/netx10_intram', 'src', src_netx10)
 elf_netx10_intram = env_netx10_intram.Elf('targets/netx10_intram', src_netx10_intram)
 bin_netx10_intram = env_netx10_intram.ObjCopy('targets/netx10_intram', elf_netx10_intram)
-uue_netx10_intram = env_netx10_intram.UUEncode('targets/netx10_intram_uue.txt', bin_netx10_intram, UUE_PRE="""L ${LOAD_HEX}
-""", UUE_POST='g ${EXEC_HEX} 0', UUE_ELF=elf_netx10_intram)
+uue_netx10_intram = env_netx10_intram.UUEncode('targets/netx10_intram_uue.txt', bin_netx10_intram, UUE_PRE="L ${LOAD_HEX}\n", UUE_POST='g ${EXEC_HEX} 0', UUE_ELF=elf_netx10_intram)
+bb0_netx10_intram = env_netx10_intram.BootBlock('targets/mmc/netx10/netx.rom', elf_netx10_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
 
 env_netx10_sqixip = env_netx10_default.Clone()
 env_netx10_sqixip.Replace(LDFILE = 'src/netx10/netx10_sqixip.ld')
