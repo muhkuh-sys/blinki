@@ -68,12 +68,15 @@ src_netx10  = Split(sources_common+sources_custom_netx10)
 env_default.Append(CPPPATH = ['src'])
 
 env_netx500_default = env_default.CreateCompilerEnv('500', ['cpu=arm926ej-s'])
+env_netx500_default.Replace(BOOTBLOCK_CHIPTYPE = 500)
 env_netx500_default.Append(CPPPATH = ['src/netx500'])
 
 env_netx50_default = env_default.CreateCompilerEnv('50', ['cpu=arm966e-s'])
+env_netx50_default.Replace(BOOTBLOCK_CHIPTYPE = 50)
 env_netx50_default.Append(CPPPATH = ['src/netx50'])
 
 env_netx10_default = env_default.CreateCompilerEnv('10', ['cpu=arm966e-s'])
+env_netx10_default.Replace(BOOTBLOCK_CHIPTYPE = 10)
 env_netx10_default.Append(CPPPATH = ['src/netx10'])
 
 
@@ -106,3 +109,4 @@ env_netx10_sqixip.Replace(LDFILE = 'src/netx10/netx10_sqixip.ld')
 src_netx10_sqixip = env_netx10_sqixip.SetBuildPath('targets/netx10_sqixip', 'src', src_netx10)
 elf_netx10_sqixip = env_netx10_sqixip.Elf('targets/netx10_sqixip', src_netx10_sqixip)
 bin_netx10_sqixip = env_netx10_sqixip.ObjCopy('targets/netx10_sqixip', elf_netx10_sqixip)
+bb0_netx10_sqixip = env_netx10_sqixip.BootBlock('targets/netx10_sqixip.img', elf_netx10_sqixip, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
