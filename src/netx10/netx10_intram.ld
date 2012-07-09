@@ -23,7 +23,7 @@ SECTIONS
 	.code ORIGIN(INTRAM2_ITCM) :
 	{
 		*(.init_code)
-		*(.text)
+		*(.text*)
 		*(.glue*)
 		*(.vfp11_veneer)
 		*(.v4_bx)

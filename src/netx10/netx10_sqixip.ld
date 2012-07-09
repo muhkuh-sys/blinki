@@ -24,7 +24,7 @@ SECTIONS
 	.code ORIGIN(SQIROM)+0x40 :
 	{
 		*(.init_code)
-		*(.text)
+		*(.text*)
 		*(.glue*)
 		*(.vfp11_veneer)
 		*(.v4_bx)

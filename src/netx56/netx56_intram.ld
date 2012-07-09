@@ -41,7 +41,7 @@ SECTIONS
 	.code 0x08008000 :
 	{
 		*(.init_code)
-		*(.text)
+		*(.text*)
 	
 		/* .rodata section which is used for read-only data (constants) */
 		*(.rodata*)

@@ -48,7 +48,7 @@ SECTIONS
 	.code ORIGIN(INTRAM)+0x8000 :
 	{
 		*(.init_code)
-		*(.text)
+		*(.text*)
 	
 		/* .rodata section which is used for read-only data (constants) */
 		*(.rodata*)
