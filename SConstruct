@@ -24,27 +24,14 @@
 #
 # Set up the Muhkuh Build System.
 #
-
 SConscript('mbs/SConscript')
 Import('env_default')
-
-SConscript('platform/SConscript')
-Import('platform_lib_netx500', 'platform_lib_netx56', 'platform_lib_netx50', 'platform_lib_netx10')
-
-#----------------------------------------------------------------------------
-# This is the list of sources. The elements must be separated with whitespace
-# (i.e. spaces, tabs, newlines). The amount of whitespace does not matter.
-sources = """
-	src/init_netx_test.S
-	src/main.c
-"""
 
 
 #----------------------------------------------------------------------------
 #
 # Create the compiler environments.
 #
-
 env_default.Append(CPPPATH = ['src', '#platform/src', '#platform/src/lib'])
 
 env_netx500_default = env_default.CreateCompilerEnv('500', ['cpu=arm926ej-s'])
@@ -58,6 +45,25 @@ env_netx50_default.Replace(BOOTBLOCK_CHIPTYPE = 50)
 
 env_netx10_default = env_default.CreateCompilerEnv('10', ['cpu=arm966e-s'])
 env_netx10_default.Replace(BOOTBLOCK_CHIPTYPE = 10)
+
+Export('env_netx500_default', 'env_netx56_default', 'env_netx50_default', 'env_netx10_default')
+
+
+#----------------------------------------------------------------------------
+#
+# Build the platform libraries.
+#
+SConscript('platform/SConscript')
+Import('platform_lib_netx500', 'platform_lib_netx56', 'platform_lib_netx50', 'platform_lib_netx10')
+
+
+#----------------------------------------------------------------------------
+# This is the list of sources. The elements must be separated with whitespace
+# (i.e. spaces, tabs, newlines). The amount of whitespace does not matter.
+sources = """
+	src/init_netx_test.S
+	src/main.c
+"""
 
 
 #----------------------------------------------------------------------------
