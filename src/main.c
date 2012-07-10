@@ -52,6 +52,47 @@ static const UART_CONFIGURATION_T tUartCfg =
 #endif
 
 
+#define IO_UART_UNIT 0
+
+static unsigned char io_uart_get(void)
+{
+	return (unsigned char)uart_get(IO_UART_UNIT);
+}
+
+
+static void io_uart_put(unsigned int uiChar)
+{
+	uart_put(IO_UART_UNIT, (unsigned char)uiChar);
+}
+
+
+static unsigned int io_uart_peek(void)
+{
+	return uart_peek(IO_UART_UNIT);
+}
+
+
+static void io_uart_flush(void)
+{
+	uart_flush(IO_UART_UNIT);
+}
+
+
+static const SERIAL_COMM_UI_FN_T tSerialVectors_Uart =
+{
+	.fn =
+	{
+		.fnGet = io_uart_get,
+		.fnPut = io_uart_put,
+		.fnPeek = io_uart_peek,
+		.fnFlush = io_uart_flush
+	}
+};
+
+
+SERIAL_COMM_UI_FN_T tSerialVectors;
+
+
 void blinki_main(void) __attribute__ ((noreturn));
 void blinki_main(void)
 {
@@ -59,7 +100,10 @@ void blinki_main(void)
 
 
 	systime_init();
-	uart_init(0, &tUartCfg);
+	uart_init(IO_UART_UNIT, &tUartCfg);
+
+	/* Set the serial vectors. */
+	memcpy(&tSerialVectors, &tSerialVectors_Uart, sizeof(SERIAL_COMM_UI_FN_T));
 
 	uprintf("*** hallo! ***\n");
 

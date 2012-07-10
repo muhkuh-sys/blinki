@@ -32,12 +32,6 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.serialvectors ORIGIN(DTCM)+LENGTH(DTCM)-0x10 :
-	{
-		PROVIDE ( tSerialVectors = . );
-		. = . + 0x10;
-	} >DTCM
-
 	.stack ORIGIN(INTRAM)+4 :
 	{
 		. = . + 0x7ffc;

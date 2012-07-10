@@ -32,12 +32,6 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.serialvectors 0x04000ff0 :
-	{
-		PROVIDE ( tSerialVectors = . );
-		. = . + 0x10;
-	} >DTCM
-
 	.stack 0x08000004 :
 	{
 		. = . + 0x7ffc;

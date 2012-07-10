@@ -45,12 +45,6 @@ SECTIONS
 	__data_loadaddr__ = LOADADDR(.data) ;
 
 
-	.serial_vectors ORIGIN(INTRAM0_DTCM)+LENGTH(INTRAM0_DTCM)-0x10 :
-	{
-		tSerialVectors = . ;
-		. = . + 0x10;
-	} >INTRAM0_DTCM
-
 	.bss :
 	{
 		/* zero-initialized data */
