@@ -82,7 +82,7 @@ env_netx56_intram.Replace(LDFILE = 'src/netx56/netx56_intram.ld')
 src_netx56_intram = env_netx56_intram.SetBuildPath('targets/netx56_intram', 'src', sources)
 elf_netx56_intram = env_netx56_intram.Elf('targets/netx56_intram', src_netx56_intram + platform_lib_netx56)
 bb0_netx56_intram = env_netx56_intram.BootBlock('targets/mmc/netx56/netx.rom', elf_netx56_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
-bb1_netx56_intram = env_netx56_intram.BootBlock('targets/netx56_intram.img', elf_netx56_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
+bb1_netx56_intram = env_netx56_intram.BootBlock('targets/netx56_intram.img', elf_netx56_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
 
 env_netx50_intram = env_netx50_default.Clone()
 env_netx50_intram.Replace(LDFILE = 'src/netx50/netx50_intram.ld')
