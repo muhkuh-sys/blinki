@@ -23,7 +23,7 @@ SECTIONS
 {
 	.assert_empty (NOLOAD) :
 	{
-		/* NOTE: include all sections here whioch should be empty.
+		/* NOTE: include all sections here which should be empty.
 		 */
 		*(.data)
 		*(.glue*)
@@ -32,16 +32,16 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.stack 0x08000004 :
+	.stack 0x08000000 :
 	{
-		. = . + 0x7ffc;
+		. = . + 0x8000;
 		PROVIDE ( stack_top = . );
 	} >INTRAM
 
 
 	.code 0x08008000 :
 	{
-		*(.init_code)
+		KEEP(*(.init_code))
 		*(.text*)
 	
 		/* .rodata section which is used for read-only data (constants) */
