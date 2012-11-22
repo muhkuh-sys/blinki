@@ -93,6 +93,10 @@ static const SERIAL_COMM_UI_FN_T tSerialVectors_Uart =
 SERIAL_COMM_UI_FN_T tSerialVectors;
 
 
+#if ASIC_TYP==56
+extern volatile unsigned long aulDpmStart[16384];
+#endif
+
 void blinki_main(void) __attribute__ ((noreturn));
 void blinki_main(void)
 {
@@ -107,7 +111,16 @@ void blinki_main(void)
 
 	uprintf("*** hallo! ***\n");
 
-	/* Switch all leds off. */
+#if ASIC_TYP==56
+	/* Overwrite the DPM boot cookie to show the host that the firmware started. */
+	if( aulDpmStart[0x40]==0x4C42584E )
+	{
+		aulDpmStart[0x40] = 0x33323130;
+	}
+#endif
+
+
+	/* Switch all LEDs off. */
 	rdy_run_setLEDs(RDYRUN_OFF);
 
 	rdy_run_blinki_init(&tBlinkiHandle, 0x00000055, 0x00000150);

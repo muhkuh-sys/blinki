@@ -14,6 +14,7 @@ MEMORY
 	ASSERT_EMPTY(rwx)  : ORIGIN = 0x00000000, LENGTH = 0
 
 	INTRAM(rwx)        : ORIGIN = 0x08000000, LENGTH = 0x00080000
+	DPM(rwx)           : ORIGIN = 0x08080000, LENGTH = 0x00010000
 }
 
 
@@ -55,7 +56,13 @@ SECTIONS
 		PROVIDE ( __bss_end__ = . );
 	} >INTRAM
 
-
+	.dpm ORIGIN(DPM) :
+	{
+		PROVIDE ( aulDpmStart = . );
+		. = . + 0x10000;
+	} >DPM
+	
+	
 	/* Stabs debugging sections.  */
 	.stab          0 : { *(.stab) }
 	.stabstr       0 : { *(.stabstr) }
