@@ -54,7 +54,7 @@ Export('env_netx500_default', 'env_netx56_default', 'env_netx50_default', 'env_n
 # Build the platform libraries.
 #
 PLATFORM_LIB_CFG_BUILDS = [500, 56, 50, 10]
-SConscript('platform/SConscript')
+SConscript('platform/SConscript', exports='PLATFORM_LIB_CFG_BUILDS')
 Import('platform_lib_netx500', 'platform_lib_netx56', 'platform_lib_netx50', 'platform_lib_netx10')
 
 
