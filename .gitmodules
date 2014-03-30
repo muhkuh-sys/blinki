@@ -1,0 +1,6 @@
+[submodule "mbs"]
+	path = mbs
+	url = https://github.com/docbacardi/mbs.git
+[submodule "platform"]
+	path = platform
+	url = https://github.com/docbacardi/platform.git
