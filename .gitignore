@@ -8,5 +8,8 @@
 # Ignore all files in the targets folders.
 /targets/
 
+# Ignore the local Eclipse settings.
+/.settings
+
 # Ignore all compiled python modules.
 *.pyc
