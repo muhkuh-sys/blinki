@@ -11,58 +11,60 @@ ENTRY(start)
 
 MEMORY
 {
-	INTRAM2_ITCM(rwx)	: ORIGIN = 0x00020000, LENGTH = 0x00010000
-	INTRAM0_DTCM(rwx)	: ORIGIN = 0x04000000, LENGTH = 0x00010000
-	INTRAM3_DTCM(rwx)	: ORIGIN = 0x04030000, LENGTH = 0x00010000
-	SQIROM(rx)		: ORIGIN = 0x09000000, LENGTH = 0x01000000
+	ASSERT_EMPTY(rwx)  : ORIGIN = 0x00000000, LENGTH = 0
+
+	INTRAM(rwx)        : ORIGIN = 0x08000000, LENGTH = 0x00080000
+	DPM(rwx)           : ORIGIN = 0x08080000, LENGTH = 0x00010000
+	SQIROM(rx)         : ORIGIN = 0x0c000000, LENGTH = 0x01000000
 }
 
 
 /* Section Definitions */
 SECTIONS
 {
-	.code ORIGIN(SQIROM)+0x40 :
+	.assert_empty (NOLOAD) :
 	{
-		*(.init_code)
-		*(.text*)
+		/* NOTE: include all sections here whioch should be empty.
+		 */
+		*(.data)
 		*(.glue*)
 		*(.vfp11_veneer)
 		*(.v4_bx)
-	} >SQIROM
+	} >ASSERT_EMPTY
 
 
-	.data ORIGIN(INTRAM3_DTCM) : AT(ORIGIN(SQIROM)+0x40+SIZEOF(.code))
+	.stack 0x08000004 :
 	{
-		__data_start__ = . ;
+		. = . + 0x7ffc;
+		PROVIDE ( stack_top = . );
+	} >INTRAM
 
-		/* ro data */
+
+	.code ORIGIN(SQIROM)+64 :
+	{
+		KEEP(*(.header))
+		*(.init_code)
+		*(.text*)
+	
+		/* .rodata section which is used for read-only data (constants) */
 		*(.rodata*)
-
-		/* rw data */
-		*(.data)
-
-		__data_end__ = . ;
-	} >INTRAM3_DTCM
-	__data_loadaddr__ = LOADADDR(.data) ;
-
+	} >SQIROM
 
 	.bss :
 	{
-		/* zero-initialized data */
-
-		__bss_start__ = . ;
-
+		PROVIDE ( __bss_start__ = . );
 		*(.bss)
 		*(COMMON)
+		PROVIDE ( __bss_end__ = . );
+	} >INTRAM
 
-		__bss_end__ = . ;
-	} >INTRAM3_DTCM
-
-
-	/* set the top of the stack to the end of INTRAM1 */
-	stack_top = ORIGIN(INTRAM3_DTCM) + LENGTH(INTRAM3_DTCM) ;
-
-
+	.dpm ORIGIN(DPM) :
+	{
+		PROVIDE ( aulDpmStart = . );
+		. = . + 0x10000;
+	} >DPM
+	
+	
 	/* Stabs debugging sections.  */
 	.stab          0 : { *(.stab) }
 	.stabstr       0 : { *(.stabstr) }

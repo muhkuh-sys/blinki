@@ -23,6 +23,7 @@ SECTIONS
 {
 	.code ORIGIN(SQIROM)+0x40 :
 	{
+		KEEP(*(.header))
 		*(.init_code)
 		*(.text*)
 		*(.glue*)

@@ -32,7 +32,7 @@ Import('env_default')
 #
 # Create the compiler environments.
 #
-env_default.Append(CPPPATH = ['src', '#platform/src', '#platform/src/lib'])
+env_default.Append(CPPPATH = ['src', '#platform/src', '#platform/src/lib', '#targets/version'])
 
 env_netx500_default = env_default.CreateCompilerEnv('500', ['arch=armv5te'])
 env_netx500_default.Replace(BOOTBLOCK_CHIPTYPE = 500)
@@ -51,6 +51,13 @@ Export('env_netx500_default', 'env_netx56_default', 'env_netx50_default', 'env_n
 
 #----------------------------------------------------------------------------
 #
+# Get the source code version from the VCS.
+#
+env_default.Version('targets/version/version.h', 'templates/version.h')
+
+
+#----------------------------------------------------------------------------
+#
 # Build the platform libraries.
 #
 PLATFORM_LIB_CFG_BUILDS = [500, 56, 50, 10]
@@ -62,6 +69,7 @@ Import('platform_lib_netx500', 'platform_lib_netx56', 'platform_lib_netx50', 'pl
 # This is the list of sources. The elements must be separated with whitespace
 # (i.e. spaces, tabs, newlines). The amount of whitespace does not matter.
 sources = """
+	src/header.c
 	src/init_netx_test.S
 	src/main.c
 """
@@ -74,34 +82,40 @@ sources = """
 env_netx500_intram = env_netx500_default.Clone()
 env_netx500_intram.Replace(LDFILE = 'src/netx500/netx500_intram.ld')
 src_netx500_intram = env_netx500_intram.SetBuildPath('targets/netx500_intram', 'src', sources)
-elf_netx500_intram = env_netx500_intram.Elf('targets/netx500_intram', src_netx500_intram + platform_lib_netx500)
+elf_netx500_intram = env_netx500_intram.Elf('targets/netx500_intram/netx500_intram.elf', src_netx500_intram + platform_lib_netx500)
 bb0_netx500_intram = env_netx500_intram.BootBlock('targets/mmc/netx500/netx.rom', elf_netx500_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
-bb1_netx500_intram = env_netx500_intram.BootBlock('targets/netx500_spi_intram.img', elf_netx500_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
+bb1_netx500_intram = env_netx500_intram.BootBlock('targets/blinki_netx500_spi_intram.bin', elf_netx500_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
 
 env_netx56_intram = env_netx56_default.Clone()
 env_netx56_intram.Replace(LDFILE = 'src/netx56/netx56_intram.ld')
 src_netx56_intram = env_netx56_intram.SetBuildPath('targets/netx56_intram', 'src', sources)
-elf_netx56_intram = env_netx56_intram.Elf('targets/netx56_intram', src_netx56_intram + platform_lib_netx56)
+elf_netx56_intram = env_netx56_intram.Elf('targets/netx56_intram/netx56_intram.elf', src_netx56_intram + platform_lib_netx56)
 bb0_netx56_intram = env_netx56_intram.BootBlock('targets/mmc/netx56/netx.rom', elf_netx56_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
-bb1_netx56_intram = env_netx56_intram.BootBlock('targets/netx56_spi_intram.img', elf_netx56_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
+bb1_netx56_intram = env_netx56_intram.BootBlock('targets/blinki_netx56_spi_intram.bin', elf_netx56_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
+
+env_netx56_sqixip = env_netx56_default.Clone()
+env_netx56_sqixip.Replace(LDFILE = 'src/netx56/netx56_sqixip.ld')
+src_netx56_sqixip = env_netx56_sqixip.SetBuildPath('targets/netx56_sqixip', 'src', sources)
+elf_netx56_sqixip = env_netx56_sqixip.Elf('targets/netx56_sqixip/netx56_sqixip.elf', src_netx56_sqixip + platform_lib_netx56)
+bb0_netx56_sqixip = env_netx56_sqixip.BootBlock('targets/blinki_netx56_sqixip.bin', elf_netx56_sqixip, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
 
 env_netx50_intram = env_netx50_default.Clone()
 env_netx50_intram.Replace(LDFILE = 'src/netx50/netx50_intram.ld')
 src_netx50_intram = env_netx50_intram.SetBuildPath('targets/netx50_intram', 'src', sources)
-elf_netx50_intram = env_netx50_intram.Elf('targets/netx50_intram', src_netx50_intram + platform_lib_netx50)
+elf_netx50_intram = env_netx50_intram.Elf('targets/netx50_intram/netx50_intram.elf', src_netx50_intram + platform_lib_netx50)
 bb0_netx50_intram = env_netx50_intram.BootBlock('targets/mmc/netx50/netx.rom', elf_netx50_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
-bb1_netx50_intram = env_netx50_intram.BootBlock('targets/netx50_spi_intram.img', elf_netx50_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
+bb1_netx50_intram = env_netx50_intram.BootBlock('targets/blinki_netx50_spi_intram.bin', elf_netx50_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
 
 env_netx10_intram = env_netx10_default.Clone()
 env_netx10_intram.Replace(LDFILE = 'src/netx10/netx10_intram.ld')
 src_netx10_intram = env_netx10_intram.SetBuildPath('targets/netx10_intram', 'src', sources)
-elf_netx10_intram = env_netx10_intram.Elf('targets/netx10_intram', src_netx10_intram + platform_lib_netx10)
+elf_netx10_intram = env_netx10_intram.Elf('targets/netx10_intram/netx10_intram.elf', src_netx10_intram + platform_lib_netx10)
 bb0_netx10_intram = env_netx10_intram.BootBlock('targets/mmc/netx10/netx.rom', elf_netx10_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
-bb1_netx10_intram = env_netx10_intram.BootBlock('targets/netx10_spi_intram.img', elf_netx10_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
+bb1_netx10_intram = env_netx10_intram.BootBlock('targets/blinki_netx10_spi_intram.bin', elf_netx10_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
 
 env_netx10_sqixip = env_netx10_default.Clone()
 env_netx10_sqixip.Replace(LDFILE = 'src/netx10/netx10_sqixip.ld')
 src_netx10_sqixip = env_netx10_sqixip.SetBuildPath('targets/netx10_sqixip', 'src', sources)
-elf_netx10_sqixip = env_netx10_sqixip.Elf('targets/netx10_sqixip', src_netx10_sqixip + platform_lib_netx10)
-bb0_netx10_sqixip = env_netx10_sqixip.BootBlock('targets/netx10_sqixip.img', elf_netx10_sqixip, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
+elf_netx10_sqixip = env_netx10_sqixip.Elf('targets/netx10_sqixip/netx10_sqixip.elf', src_netx10_sqixip + platform_lib_netx10)
+bb0_netx10_sqixip = env_netx10_sqixip.BootBlock('targets/blinki_netx10_sqixip.bin', elf_netx10_sqixip, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
 

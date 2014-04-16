@@ -41,6 +41,7 @@ SECTIONS
 
 	.code 0x08008000 :
 	{
+		KEEP(*(.header))
 		KEEP(*(.init_code))
 		*(.text*)
 	

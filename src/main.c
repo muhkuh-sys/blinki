@@ -9,6 +9,7 @@
 
 #include "uart.h"
 #include "uprintf.h"
+#include "version.h"
 
 #include "serial_vectors.h"
 
@@ -109,7 +110,8 @@ void blinki_main(void)
 	/* Set the serial vectors. */
 	memcpy(&tSerialVectors, &tSerialVectors_Uart, sizeof(SERIAL_COMM_UI_FN_T));
 
-	uprintf("*** hallo! ***\n");
+	uprintf("\f. *** Blinki by doc_bacardi@users.sourceforge.net ***\n");
+	uprintf("V" VERSION_ALL "\n\n");
 
 #if ASIC_TYP==56
 	/* Overwrite the DPM boot cookie to show the host that the firmware started. */

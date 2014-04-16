@@ -22,6 +22,7 @@ SECTIONS
 {
 	.code ORIGIN(INTRAM2_ITCM) :
 	{
+		KEEP(*(.header))
 		*(.init_code)
 		*(.text*)
 		*(.glue*)

@@ -41,6 +41,7 @@ SECTIONS
 
 	.code ORIGIN(INTRAM)+0x8000 :
 	{
+		KEEP(*(.header))
 		*(.init_code)
 		*(.text*)
 	
