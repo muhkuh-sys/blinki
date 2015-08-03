@@ -25,8 +25,9 @@
 
 const VERSION_HEADER_T tVersionHeader =
 {
-	.ulVersionMaj = VERSION_MAJ,
-	.ulVersionMin = VERSION_MIN,
+	.ulVersionMajor = VERSION_MAJOR,
+	.ulVersionMinor = VERSION_MINOR,
+	.ulVersionMicro = VERSION_MICRO,
 	.acVersionVcs = VERSION_VCS
 };
 
