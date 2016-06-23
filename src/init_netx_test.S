@@ -10,7 +10,7 @@
 
 @--------------------------------------
 
-  .func start_init_s
+  .func start
 
 start:
 	stmfd	sp!, {r0, r1, r2, lr}
