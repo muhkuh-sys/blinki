@@ -12,6 +12,7 @@ addons:
   apt:
     packages:
     - gcc-multilib
+    - lib32z1
 
 
 # This is the command to build the whole project and pack the results in a distributable form.
