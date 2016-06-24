@@ -27,42 +27,57 @@
 SConscript('mbs/SConscript')
 Import('env_default')
 
+# Create a build environment for the ARM9 based netX chips.
+env_arm9 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.7', 'asciidoc'])
+
+# Create a build environment for the Cortex-R based netX chips.
+env_cortex7 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc'])
+
 
 #----------------------------------------------------------------------------
 #
 # Create the compiler environments.
 #
-env_default.Append(CPPPATH = ['src', '#platform/src', '#platform/src/lib', '#targets/version'])
+astrIncludePaths = ['src', '#platform/src', '#platform/src/lib', '#targets/version']
 
-env_netx500_default = env_default.CreateCompilerEnv('500', ['arch=armv5te'])
+
+env_netx4000_default = env_cortex7.CreateCompilerEnv('4000', ['arch=armv7', 'thumb'], ['arch=armv7-r', 'thumb'])
+env_netx4000_default.Append(CPPPATH = astrIncludePaths)
+env_netx4000_default.Replace(BOOTBLOCK_CHIPTYPE = 4000)
+
+env_netx500_default = env_arm9.CreateCompilerEnv('500', ['arch=armv5te'])
+env_netx500_default.Append(CPPPATH = astrIncludePaths)
 env_netx500_default.Replace(BOOTBLOCK_CHIPTYPE = 500)
 
-env_netx56_default = env_default.CreateCompilerEnv('56', ['arch=armv5te'])
+env_netx56_default = env_arm9.CreateCompilerEnv('56', ['arch=armv5te'])
+env_netx56_default.Append(CPPPATH = astrIncludePaths)
 env_netx56_default.Replace(BOOTBLOCK_CHIPTYPE = 56)
 
-env_netx50_default = env_default.CreateCompilerEnv('50', ['arch=armv5te'])
+env_netx50_default = env_arm9.CreateCompilerEnv('50', ['arch=armv5te'])
+env_netx50_default.Append(CPPPATH = astrIncludePaths)
 env_netx50_default.Replace(BOOTBLOCK_CHIPTYPE = 50)
 
-env_netx10_default = env_default.CreateCompilerEnv('10', ['arch=armv5te'])
+env_netx10_default = env_arm9.CreateCompilerEnv('10', ['arch=armv5te'])
+env_netx10_default.Append(CPPPATH = astrIncludePaths)
 env_netx10_default.Replace(BOOTBLOCK_CHIPTYPE = 10)
 
-Export('env_netx500_default', 'env_netx56_default', 'env_netx50_default', 'env_netx10_default')
+Export('env_netx4000_default', 'env_netx500_default', 'env_netx56_default', 'env_netx50_default', 'env_netx10_default')
 
 
 #----------------------------------------------------------------------------
 #
 # Get the source code version from the VCS.
 #
-env_default.Version('targets/version/version.h', 'templates/version.h')
+env_default.Version('#targets/version/version.h', 'templates/version.h')
 
 
 #----------------------------------------------------------------------------
 #
 # Build the platform libraries.
 #
-PLATFORM_LIB_CFG_BUILDS = [500, 56, 50, 10]
+PLATFORM_LIB_CFG_BUILDS = [4000, 500, 56, 50, 10]
 SConscript('platform/SConscript', exports='PLATFORM_LIB_CFG_BUILDS')
-Import('platform_lib_netx500', 'platform_lib_netx56', 'platform_lib_netx50', 'platform_lib_netx10')
+Import('platform_lib_netx4000', 'platform_lib_netx500', 'platform_lib_netx56', 'platform_lib_netx50', 'platform_lib_netx10')
 
 
 #----------------------------------------------------------------------------
@@ -79,6 +94,13 @@ sources = """
 #
 # Build all files.
 #
+env_netx4000_intram = env_netx4000_default.Clone()
+env_netx4000_intram.Replace(LDFILE = 'src/netx4000/netx4000_intram.ld')
+src_netx4000_intram = env_netx4000_intram.SetBuildPath('targets/netx4000_intram', 'src', sources)
+elf_netx4000_intram = env_netx4000_intram.Elf('targets/netx4000_intram/netx4000_intram.elf', src_netx4000_intram + platform_lib_netx4000)
+bb0_netx4000_intram = env_netx4000_intram.HBootImage('targets/mmc/netx4000/netx.rom', 'src/netx4000/DEFAULT_to_INTRAM.xml', KNOWN_FILES=dict({'tElf': elf_netx4000_intram[0]}))
+bb1_netx4000_intram = env_netx4000_intram.HBootImage('targets/blinki_netx4000_spi_intram.bin', 'src/netx4000/DEFAULT_to_INTRAM.xml', KNOWN_FILES=dict({'tElf': elf_netx4000_intram[0]}))
+
 env_netx500_intram = env_netx500_default.Clone()
 env_netx500_intram.Replace(LDFILE = 'src/netx500/netx500_intram.ld')
 src_netx500_intram = env_netx500_intram.SetBuildPath('targets/netx500_intram', 'src', sources)

@@ -19,36 +19,45 @@
 /* NXHX10-ETM */
 static const UART_CONFIGURATION_T tUartCfg =
 {
-        .uc_rx_mmio = 20U,
-        .uc_tx_mmio = 21U,
-        .uc_rts_mmio = 0xffU,
-        .uc_cts_mmio = 0xffU,
-        .us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
+	.uc_rx_mmio = 20U,
+	.uc_tx_mmio = 21U,
+	.uc_rts_mmio = 0xffU,
+	.uc_cts_mmio = 0xffU,
+	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
 #elif ASIC_TYP==56
 /* NXHX51-ETM */
 static const UART_CONFIGURATION_T tUartCfg =
 {
-        .uc_rx_mmio = 34U,
-        .uc_tx_mmio = 35U,
-        .uc_rts_mmio = 0xffU,
-        .uc_cts_mmio = 0xffU,
-        .us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
+	.uc_rx_mmio = 34U,
+	.uc_tx_mmio = 35U,
+	.uc_rts_mmio = 0xffU,
+	.uc_cts_mmio = 0xffU,
+	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
 #elif ASIC_TYP==50
 /* NXHX50-ETM */
 static const UART_CONFIGURATION_T tUartCfg =
 {
-        .uc_rx_mmio = 34U,
-        .uc_tx_mmio = 35U,
-        .uc_rts_mmio = 0xffU,
-        .uc_cts_mmio = 0xffU,
-        .us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
+	.uc_rx_mmio = 34U,
+	.uc_tx_mmio = 35U,
+	.uc_rts_mmio = 0xffU,
+	.uc_cts_mmio = 0xffU,
+	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
 #elif ASIC_TYP==100 || ASIC_TYP==500
 static const UART_CONFIGURATION_T tUartCfg =
 {
-        .us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
+	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
+};
+#elif ASIC_TYP==4000
+static const UART_CONFIGURATION_T tUartCfg =
+{
+	.uc_rx_mmio = 26U,
+	.uc_tx_mmio = 27U,
+	.uc_rts_mmio = 0xffU,
+	.uc_cts_mmio = 0xffU,
+	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
 #endif
 
