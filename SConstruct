@@ -91,11 +91,11 @@ sources = """
 
 # special files for netX 4000 bootup
 sources_cr7_openfirewalls = """
-	src/netX4000/cr7_open_netx4000_firewalls.S
+	src/netx4000/cr7_open_netx4000_firewalls.S
 """
 
 sources_cr7_EndlessLoop = """
-	src/netX4000/cr7_EndlessLoop.S
+	src/netx4000/cr7_EndlessLoop.S
 """
 
 #----------------------------------------------------------------------------
