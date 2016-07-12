@@ -23,14 +23,10 @@
 			</Core0>
 		</ExecuteCA9>
 
-		<!-- Load Programm for CR7 and start afterwards -->
-		<Data>
-			<File name="@tElfCR7" />
-		</Data>
+		<!-- On CR7 jump to the WFE loop in ROM. -->
 		<Execute>
-			<File name="@tElfCR7" />
+			<Address>0x0410d124</Address>
 		</Execute>
-
 	</Chunks>
 </HBootImage>
 
