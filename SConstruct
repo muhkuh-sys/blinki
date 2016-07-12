@@ -89,6 +89,10 @@ sources = """
 	src/main.c
 """
 
+sources_netx4000_ca9 = """
+	src/netx4000/driver_rap_uart.c
+"""
+
 # special files for netX 4000 bootup
 sources_cr7_openfirewalls = """
 	src/netx4000/cr7_open_netx4000_firewalls.S
@@ -101,29 +105,38 @@ sources_cr7_openfirewalls = """
 # open firewalls from RAP into netX area at netX 4000
 env_netx4000_cr7_openfirewalls = env_netx4000_default.Clone()
 env_netx4000_cr7_openfirewalls.Replace(LDFILE = 'src/netx4000/netx4000_cr7_intram.ld')
-src_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.SetBuildPath('targets/netx4000_intram', 'src', sources_cr7_openfirewalls)
+src_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.SetBuildPath('targets/netx4000_openfirewalls', 'src', sources_cr7_openfirewalls)
 elf_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.Elf('targets/netx4000_intram/netx4000_cr7_openfirewalls.elf', src_netx4000_cr7_openfirewalls + platform_lib_netx4000)
 txt_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.ObjDump('targets/netx4000_intram/netx4000_cr7_openfirewalls.txt', elf_netx4000_cr7_openfirewalls, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
-# Blinki programm for cortex CPUs
-env_netx4000_blinki_intram = env_netx4000_default.Clone()
-env_netx4000_blinki_intram.Replace(LDFILE = 'src/netx4000/netx4000_ca9_intram.ld')
-src_netx4000_blinki_intram = env_netx4000_blinki_intram.SetBuildPath('targets/netx4000_intram', 'src', sources)
-elf_netx4000_blinki_intram = env_netx4000_blinki_intram.Elf('targets/netx4000_intram/netx4000_blinki_intram.elf', src_netx4000_blinki_intram + platform_lib_netx4000)
-txt_netx4000_blinki_intram = env_netx4000_blinki_intram.ObjDump('targets/netx4000_intram/netx4000_blinki_intram.txt', elf_netx4000_blinki_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+# Blinki for the CR7.
+env_netx4000_blinki_cr7 = env_netx4000_default.Clone()
+env_netx4000_blinki_cr7.Replace(LDFILE = 'src/netx4000/netx4000_cr7_intram.ld')
+src_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.SetBuildPath('targets/netx4000_cr7', 'src', sources)
+elf_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.Elf('targets/netx4000_cr7/netx4000_blinki_cr7.elf', src_netx4000_blinki_cr7 + platform_lib_netx4000)
+txt_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.ObjDump('targets/netx4000_cr7/netx4000_blinki_cr7.txt', elf_netx4000_blinki_cr7, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+
+# Blinki for one of the CA9 cores.
+env_netx4000_blinki_ca9 = env_netx4000_default.Clone()
+env_netx4000_blinki_ca9.Replace(LDFILE = 'src/netx4000/netx4000_ca9_intram.ld')
+env_netx4000_blinki_ca9.Append(CPPPATH = ['src/netx4000'])
+env_netx4000_blinki_ca9.Append(CPPDEFINES = [['CFG_USE_RAP_UART', '1']])
+src_netx4000_blinki_ca9 = env_netx4000_blinki_ca9.SetBuildPath('targets/netx4000_ca9', 'src', sources + sources_netx4000_ca9)
+elf_netx4000_blinki_ca9 = env_netx4000_blinki_ca9.Elf('targets/netx4000_ca9/netx4000_blinki_ca9.elf', src_netx4000_blinki_ca9 + platform_lib_netx4000)
+txt_netx4000_blinki_ca9 = env_netx4000_blinki_ca9.ObjDump('targets/netx4000_ca9/netx4000_blinki_ca9.txt', elf_netx4000_blinki_ca9, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
 # Build 3 hboot images to be loaded into netX 4000
 # hboot image: RUN blinki at CR7
-bb0_netx4000_intram = env_netx4000_blinki_intram.HBootImage('targets/blinki_netx4000_cr7_spi_intram.bin', 'src/netx4000/CR7_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_intram[0]}))
-bb1_netx4000_intram = env_netx4000_blinki_intram.HBootImage('targets/mmc/netx4000/cr7/netx.rom', 'src/netx4000/CR7_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_intram[0]}))
+bb0_netx4000_intram = env_netx4000_blinki_cr7.HBootImage('targets/blinki_netx4000_cr7_spi_intram.bin', 'src/netx4000/CR7_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7[0]}))
+bb1_netx4000_intram = env_netx4000_blinki_cr7.HBootImage('targets/mmc/netx4000/cr7/netx.rom', 'src/netx4000/CR7_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7[0]}))
 
 # hboot image: open firewalls from RAP into netX area; RUN blinki at CR9 core 0; keep CR7 inside endless loop
-bb2_netx4000_intram = env_netx4000_blinki_intram.HBootImage('targets/blinki_netx4000_ca9core0_spi_intram.bin', 'src/netx4000/CA9core0_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_intram[0]}))
-bb3_netx4000_intram = env_netx4000_blinki_intram.HBootImage('targets/mmc/netx4000/ca9core0/netx.rom', 'src/netx4000/CA9core0_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_intram[0]}))
+bb2_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx4000_ca9core0_spi_intram.bin', 'src/netx4000/CA9core0_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_ca9[0]}))
+bb3_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core0/netx.rom', 'src/netx4000/CA9core0_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_ca9[0]}))
 
 # hboot image: open firewalls from RAP into netX area; RUN blinki at CR9 core 1; keep CR7 inside endless loop
-bb4_netx4000_intram = env_netx4000_blinki_intram.HBootImage('targets/blinki_netx4000_ca9core1_spi_intram.bin', 'src/netx4000/CA9core1_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_intram[0]}))
-bb5_netx4000_intram = env_netx4000_blinki_intram.HBootImage('targets/mmc/netx4000/ca9core1/netx.rom', 'src/netx4000/CA9core1_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_intram[0]}))
+bb4_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx4000_ca9core1_spi_intram.bin', 'src/netx4000/CA9core1_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9[0]}))
+bb5_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core1/netx.rom', 'src/netx4000/CA9core1_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9[0]}))
 
 
 

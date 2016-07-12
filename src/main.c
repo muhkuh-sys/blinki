@@ -13,6 +13,10 @@
 
 #include "serial_vectors.h"
 
+#if defined(CFG_USE_RAP_UART)
+#       include "driver_rap_uart.h"
+#endif
+
 /*-------------------------------------------------------------------------*/
 
 #if ASIC_TYP==10
@@ -51,6 +55,7 @@ static const UART_CONFIGURATION_T tUartCfg =
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
 #elif ASIC_TYP==4000
+#       if !defined(CFG_USE_RAP_UART)
 static const UART_CONFIGURATION_T tUartCfg =
 {
 	.uc_rx_mmio = 26U,
@@ -59,6 +64,21 @@ static const UART_CONFIGURATION_T tUartCfg =
 	.uc_cts_mmio = 0xffU,
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
+#       else
+static const RAP_UART_CONFIGURATION_T tUartCfg =
+{
+	.us_baud_div = RAP_UART_BAUDRATE_DIV(RAP_UART_BAUDRATE_115200),
+	.uc_mode = RAP_UART_MODE_BYTESIZE_8BIT,
+	.ausPortControl =
+	{
+		PORTCONTROL_CONFIGURATION(REEMUX_0, 0, REEMUX_DRV_06MA, REEMUX_UDC_PULLUP50K),      // RX
+		PORTCONTROL_CONFIGURATION(REEMUX_0, 0, REEMUX_DRV_06MA, REEMUX_UDC_PULLUP50K),      // TX
+		PORTCONTROL_CONFIGURATION(REEMUX_0, 0, REEMUX_DRV_06MA, REEMUX_UDC_PULLUP50K),      // RTS
+		PORTCONTROL_CONFIGURATION(REEMUX_0, 0, REEMUX_DRV_06MA, REEMUX_UDC_PULLUP50K)       // CTS
+	}
+};
+
+#       endif
 #endif
 
 
@@ -66,25 +86,41 @@ static const UART_CONFIGURATION_T tUartCfg =
 
 static unsigned char io_uart_get(void)
 {
+#if !defined(CFG_USE_RAP_UART)
 	return (unsigned char)uart_get(IO_UART_UNIT);
+#else
+	return rap_uart_get(IO_UART_UNIT);
+#endif
 }
 
 
 static void io_uart_put(unsigned int uiChar)
 {
+#if !defined(CFG_USE_RAP_UART)
 	uart_put(IO_UART_UNIT, (unsigned char)uiChar);
+#else
+	rap_uart_put(IO_UART_UNIT, (unsigned char)uiChar);
+#endif
 }
 
 
 static unsigned int io_uart_peek(void)
 {
+#if !defined(CFG_USE_RAP_UART)
 	return uart_peek(IO_UART_UNIT);
+#else
+	return rap_uart_peek(IO_UART_UNIT);
+#endif
 }
 
 
 static void io_uart_flush(void)
 {
+#if !defined(CFG_USE_RAP_UART)
 	uart_flush(IO_UART_UNIT);
+#else
+	rap_uart_flush(IO_UART_UNIT);
+#endif
 }
 
 
@@ -114,7 +150,11 @@ void blinki_main(void)
 
 
 	systime_init();
+#if !defined(CFG_USE_RAP_UART)
 	uart_init(IO_UART_UNIT, &tUartCfg);
+#else
+	rap_uart_open(IO_UART_UNIT, &tUartCfg);
+#endif
 
 	/* Set the serial vectors. */
 	memcpy(&tSerialVectors, &tSerialVectors_Uart, sizeof(SERIAL_COMM_UI_FN_T));
