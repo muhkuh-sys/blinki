@@ -25,7 +25,7 @@
 
 		<!-- On CR7 jump to the WFE loop in ROM. -->
 		<Execute>
-			<Address>0x0410d124</Address>
+			<Address>WFE_Loop</Address>
 		</Execute>
 
 	</Chunks>
