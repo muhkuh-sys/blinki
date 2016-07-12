@@ -1,10 +1,4 @@
-
-/* NOTE: This header is used in C and assembler sources.
- */
-
-#ifndef __ASSEMBLER__
-#       include <stddef.h>
-#endif
+#include <stddef.h>
 
 #ifndef __PORTCONTROL_H__
 #define __PORTCONTROL_H__
@@ -57,13 +51,7 @@
 #define PORTCONTROL_SKIP 0xffffU
 
 
-#ifndef __ASSEMBLER__
-void portcontrol_init(void);
 void portcontrol_apply(const unsigned short *pusIndex, const unsigned short *pusConfiguration, size_t sizConfiguration);
-void portcontrol_apply_mmio(const unsigned char *pucMmioIndex, const unsigned short *pusConfiguration, size_t sizConfiguration);
-void portcontrol_restore(const unsigned short *pusIndex, size_t sizConfiguration);
-void portcontrol_restore_mmio(const unsigned char *pucMmioIndex, size_t sizConfiguration);
-#endif
 
 
 #endif  /* __PORTCONTROL_H__ */

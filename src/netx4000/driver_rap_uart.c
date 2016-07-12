@@ -19,7 +19,7 @@
 
 #define ARRAYSIZE(a) (sizeof(a)/sizeof((a)[0]))
 
-/* Note: PortControl is not configured. This will have to be done for the real netx 4000. */
+
 typedef union RAP_UART_PORT_CONTROL_UNION
 {
 	struct RAP_UART_PORT_CONTROL_STRUCT
@@ -100,6 +100,7 @@ static const RAP_UART_INSTANCE_T atRapUartInstances[] =
 };
 
 
+
 int rap_uart_open(unsigned int uiUartUnit, const RAP_UART_CONFIGURATION_T *ptCfg)
 {
 //	unsigned long ulValue;
@@ -130,10 +131,6 @@ int rap_uart_open(unsigned int uiUartUnit, const RAP_UART_CONFIGURATION_T *ptCfg
 		ptRapUartArea->usRAP_UART_UARTIBRD = 54;
 		ptRapUartArea->usRAP_UART_UARTFBRD = 16;
 
-		/* For FPGA: */
-//		ptRapUartArea->usRAP_UART_UARTIBRD = 5;
-//		ptRapUartArea->usRAP_UART_UARTFBRD = 27;
-
 		/* Set UART to 8N1, FIFO enabled. */
 		usValue  = ptCfg->uc_mode;
 		/* Use RTS/CTS? */
@@ -144,7 +141,6 @@ int rap_uart_open(unsigned int uiUartUnit, const RAP_UART_CONFIGURATION_T *ptCfg
 		usValue |= HOSTMSK(RAP_UART_UARTLCR_H_FEN);
 		ptRapUartArea->usRAP_UART_UARTLCR_H = usValue;
 
-#if 0
 		/* Setup the port control for the RX/TX signals. */
 		portcontrol_apply(&(atRapUartInstances[uiUartUnit].tPortControlIndex.s.usRx), &ptCfg->ausPortControl[0], 2);
 		
@@ -153,7 +149,6 @@ int rap_uart_open(unsigned int uiUartUnit, const RAP_UART_CONFIGURATION_T *ptCfg
 			/* Setup the port control for the RTS and CTS signal. */
 			portcontrol_apply(&(atRapUartInstances[uiUartUnit].tPortControlIndex.s.usRts), &(ptCfg->ausPortControl[2]), 2);
 		}
-#endif
 		
 		/* Enable the UART. */
 		usValue  = HOSTMSK(RAP_UART_UARTCR_RXE);
@@ -175,6 +170,7 @@ int rap_uart_open(unsigned int uiUartUnit, const RAP_UART_CONFIGURATION_T *ptCfg
 }
 
 
+
 unsigned int rap_uart_peek(unsigned int uiUartUnit)
 {
 	HOSTADEF(S_RAP_UART) *ptRapUartArea;
@@ -191,6 +187,8 @@ unsigned int rap_uart_peek(unsigned int uiUartUnit)
 	ulValue &= HOSTMSK(RAP_UART_UARTFR_RXFE);
 	return (ulValue==0) ? 1U : 0U;
 }
+
+
 
 unsigned char rap_uart_get(unsigned int uiUartUnit)
 {
@@ -232,7 +230,6 @@ void rap_uart_put(unsigned int uiUartUnit, unsigned char ucChar)
 
 	ptRapUartArea->usRAP_UART_UARTDR = (unsigned short)ucChar;
 }
-
 
 
 
