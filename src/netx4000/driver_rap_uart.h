@@ -13,6 +13,8 @@
 #ifndef __DRIVER_RAP_UART_H__
 #define __DRIVER_RAP_UART_H__
 
+#define RAP_UART_FREQUENCY 100000000UL
+
 typedef enum ENUM_RAP_UART_BAUDRATE
 {
 	RAP_UART_BAUDRATE_300    =    3,
@@ -27,8 +29,8 @@ typedef enum ENUM_RAP_UART_BAUDRATE
 	RAP_UART_BAUDRATE_115200 = 1152
 } RAP_UART_BAUDRATE_T;
 
-/* DEV_BAUDRATE is 100 times to small -> multiply with 100 (or divide by DEV_FREQUENCY/100) */
-#define RAP_UART_BAUDRATE_DIV(a) ((a*16*65536)/(DEV_FREQUENCY/100))
+/* DEV_BAUDRATE is 100 times to small -> multiply with 100 (or divide by RAP_UART_FREQUENCY/100) */
+#define RAP_UART_BAUDRATE_DIV(a) ((a*16*65536)/(RAP_UART_FREQUENCY/100))
 
 
 typedef enum RAP_UART_MODE_BYTESIZE_ENUM
