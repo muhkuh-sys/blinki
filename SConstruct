@@ -87,6 +87,7 @@ sources = """
 	src/header.c
 	src/init_netx_test.S
 	src/main.c
+	src/uart_standalone.c
 """
 
 sources_netx4000_ca9 = """
