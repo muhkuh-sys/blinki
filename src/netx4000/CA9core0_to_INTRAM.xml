@@ -15,11 +15,7 @@
 		</Data>
 		<ExecuteCA9>
 			<Core0>
-				<File name="@tElfCA9core0" start="start_core0" />
-				<R0>0x12345678</R0>
-				<R1>0x23456789</R1>
-				<R2>0x3456789a</R2>
-				<R3>0x456789ab</R3>
+				<File name="@tElfCA9core0" start="start" />
 			</Core0>
 		</ExecuteCA9>
 
