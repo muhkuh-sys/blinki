@@ -1,6 +1,7 @@
 
 #include <string.h>
 
+#include "hboot_dpm.h"
 #include "netx_io_areas.h"
 #include "rdy_run.h"
 #include "systime.h"
@@ -22,11 +23,11 @@ extern volatile unsigned long aulPcieDpmStart[16384];
 #endif
 
 
-void blinki_main(void);
-void blinki_main(void)
+void blinki_main(void *pvBootBlock, unsigned long ulBootSource);
+void blinki_main(void *pvBootBlock __attribute__((unused)), unsigned long ulBootSource)
 {
 	BLINKI_HANDLE_T tBlinkiHandle;
-	unsigned long ulValue;
+	int iBootSourceIsDPM;
 
 
 	systime_init();
@@ -35,36 +36,24 @@ void blinki_main(void)
 	uprintf("\f. *** Blinki by doc_bacardi@users.sourceforge.net ***\n");
 	uprintf("V" VERSION_ALL "\n\n");
 
-#if ASIC_TYP==56
-	/* Overwrite the DPM boot cookie to show the host that the firmware started. */
-	if( aulDpmStart[0x40]==HBOOT_DPM_ID_LISTENING )
+	/* Was this program booted from DPM? */
+	iBootSourceIsDPM = hboot_dpm_is_bootsource_dpm(ulBootSource);
+	if( iBootSourceIsDPM!=0 )
 	{
-		aulDpmStart[0x40] = HBOOT_DPM_ID_OVERWRITE;
+		/* Yes, it came from the DPM.
+		 * Notify the host that the software has started.
+		 */
+		hboot_dpm_show_software_start(ulBootSource);
 	}
-#elif ASIC_TYP==4000
-	/* Overwrite the DPM boot cookie to show the host that the firmware started. */
-	if( aulPcieDpmStart[0x40]==HBOOT_DPM_ID_LISTENING )
-	{
-		aulPcieDpmStart[0x40] = HBOOT_DPM_ID_OVERWRITE;
-	}
-#endif
-
 
 	/* Switch all LEDs off. */
 	rdy_run_setLEDs(RDYRUN_OFF);
 
 	rdy_run_blinki_init(&tBlinkiHandle, 0x00000055, 0x00000150);
-	do
+	while(1)
 	{
 		rdy_run_blinki(&tBlinkiHandle);
 		uprintf("blinki at %dms.\n", systime_get_ms());
-
-#if ASIC_TYP==4000
-		ulValue = aulPcieDpmStart[0x40];
-		ulValue ^= HBOOT_DPM_ID_OVERWRITE;
-#else
-		ulValue = 1;
-#endif
-	} while( ulValue!=0 );
+	};
 }
 

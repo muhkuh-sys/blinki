@@ -3,7 +3,6 @@ MEMORY
 {
 	ASSERT_EMPTY(rwx)  : ORIGIN = 0x00000000, LENGTH = 0
 	CODE(rx)           : ORIGIN = 0x04000000, LENGTH = 0x0000c000
-	PCIE_DPM(rw)       : ORIGIN = 0x05060000, LENGTH = 0x00020000
 }
 
 
@@ -40,12 +39,6 @@ SECTIONS
 		. = ORIGIN(CODE) + LENGTH(CODE);
 		PROVIDE ( stack_top = . );
 	} >CODE
-
-	.pcie_dpm ORIGIN(PCIE_DPM) :
-	{
-		PROVIDE ( aulPcieDpmStart = . );
-		. = . + 0x10000;
-	} >PCIE_DPM
 
 	/* Stabs debugging sections.  */
 	.stab          0 : { *(.stab) }

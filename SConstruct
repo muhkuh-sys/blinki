@@ -84,6 +84,7 @@ Import('platform_lib_netx4000', 'platform_lib_netx500', 'platform_lib_netx56', '
 # This is the list of sources. The elements must be separated with whitespace
 # (i.e. spaces, tabs, newlines). The amount of whitespace does not matter.
 sources = """
+	src/hboot_dpm.c
 	src/header.c
 	src/init_netx_test.S
 	src/main.c
