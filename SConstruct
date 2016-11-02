@@ -138,6 +138,7 @@ env_netx90_blinki_com.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
 src_netx90_blinki_com = env_netx90_blinki_com.SetBuildPath('targets/netx90_com', 'src', sources)
 elf_netx90_blinki_com = env_netx90_blinki_com.Elf('targets/netx90_com/netx90_blinki_com.elf', src_netx90_blinki_com + env_netx90_blinki_com['PLATFORM_LIBRARY'])
 txt_netx90_blinki_com = env_netx90_blinki_com.ObjDump('targets/netx90_com/netx90_blinki_com.txt', elf_netx90_blinki_com, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_intram_com = env_netx90_blinki_com.HBootImage('targets/blinki_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_blinki_com[0]}))
 
 env_netx56_intram = atEnv.NETX56.Clone()
 env_netx56_intram.Append(CPPPATH = astrIncludePaths)
