@@ -41,26 +41,17 @@ env_cortexM4 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc
 #
 # Create the compiler environments.
 #
-astrIncludePaths = ['src', '#platform/src', '#platform/src/lib', '#targets/version']
-
-
 env_netx4000_relaxed_default = env_cortexR7.CreateCompilerEnv('NETX4000_RELAXED', ['arch=armv7', 'thumb'], ['arch=armv7-r', 'thumb'])
-env_netx4000_relaxed_default.Append(CPPPATH = astrIncludePaths)
 
 env_netx500_default = env_arm9.CreateCompilerEnv('NETX500', ['arch=armv5te'])
-env_netx500_default.Append(CPPPATH = astrIncludePaths)
 
 env_netx90_mpw_default = env_cortexM4.CreateCompilerEnv('NETX90_MPW', ['arch=armv7', 'thumb'], ['arch=armv7e-m', 'thumb'])
-env_netx90_mpw_default.Append(CPPPATH = astrIncludePaths)
 
 env_netx56_default = env_arm9.CreateCompilerEnv('NETX56', ['arch=armv5te'])
-env_netx56_default.Append(CPPPATH = astrIncludePaths)
 
 env_netx50_default = env_arm9.CreateCompilerEnv('NETX50', ['arch=armv5te'])
-env_netx50_default.Append(CPPPATH = astrIncludePaths)
 
 env_netx10_default = env_arm9.CreateCompilerEnv('NETX10', ['arch=armv5te'])
-env_netx10_default.Append(CPPPATH = astrIncludePaths)
 
 Export('env_netx4000_relaxed_default', 'env_netx500_default', 'env_netx90_mpw_default', 'env_netx56_default', 'env_netx50_default', 'env_netx10_default')
 
@@ -105,8 +96,13 @@ sources_cr7_openfirewalls = """
 #
 # Build all files.
 #
+
+# The list of include folders. Here it is used for all files.
+astrIncludePaths = ['src', '#platform/src', '#platform/src/lib', '#targets/version']
+
 # open firewalls from RAP into netX area at netX 4000
 env_netx4000_cr7_openfirewalls = env_netx4000_relaxed_default.Clone()
+env_netx4000_cr7_openfirewalls.Append(CPPPATH = astrIncludePaths)
 env_netx4000_cr7_openfirewalls.Replace(LDFILE = 'src/netx4000/netx4000_cr7_intram.ld')
 src_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.SetBuildPath('targets/netx4000_openfirewalls', 'src', sources_cr7_openfirewalls)
 elf_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.Elf('targets/netx4000_openfirewalls/netx4000_cr7_openfirewalls.elf', src_netx4000_cr7_openfirewalls + env_netx4000_cr7_openfirewalls['PLATFORM_LIBRARY'])
@@ -114,6 +110,7 @@ txt_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.ObjDump('targets
 
 # Blinki for the CR7.
 env_netx4000_blinki_cr7 = env_netx4000_relaxed_default.Clone()
+env_netx4000_blinki_cr7.Append(CPPPATH = astrIncludePaths)
 env_netx4000_blinki_cr7.Replace(LDFILE = 'src/netx4000/netx4000_cr7_intram.ld')
 src_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.SetBuildPath('targets/netx4000_cr7', 'src', sources)
 elf_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.Elf('targets/netx4000_cr7/netx4000_blinki_cr7.elf', src_netx4000_blinki_cr7 + env_netx4000_blinki_cr7['PLATFORM_LIBRARY'])
@@ -121,6 +118,7 @@ txt_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.ObjDump('targets/netx4000_cr7/
 
 # Blinki for one of the CA9 cores.
 env_netx4000_blinki_ca9 = env_netx4000_relaxed_default.Clone()
+env_netx4000_blinki_ca9.Append(CPPPATH = astrIncludePaths)
 env_netx4000_blinki_ca9.Replace(LDFILE = 'src/netx4000/netx4000_ca9_intram.ld')
 env_netx4000_blinki_ca9.Append(CPPPATH = ['src/netx4000'])
 env_netx4000_blinki_ca9.Append(CPPDEFINES = [['CFG_USE_RAP_UART', '1']])
@@ -144,6 +142,7 @@ bb5_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/c
 
 
 env_netx500_intram = env_netx500_default.Clone()
+env_netx500_intram.Append(CPPPATH = astrIncludePaths)
 env_netx500_intram.Replace(LDFILE = 'src/netx500/netx500_intram.ld')
 src_netx500_intram = env_netx500_intram.SetBuildPath('targets/netx500_intram', 'src', sources)
 elf_netx500_intram = env_netx500_intram.Elf('targets/netx500_intram/netx500_intram.elf', src_netx500_intram + env_netx500_intram['PLATFORM_LIBRARY'])
@@ -152,12 +151,14 @@ bb1_netx500_intram = env_netx500_intram.BootBlock('targets/blinki_netx500_spi_in
 
 # Blinki for the netX90 communication CPU.
 env_netx90_blinki_com = env_netx90_mpw_default.Clone()
+env_netx90_blinki_com.Append(CPPPATH = astrIncludePaths)
 env_netx90_blinki_com.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
 src_netx90_blinki_com = env_netx90_blinki_com.SetBuildPath('targets/netx90_com', 'src', sources)
 elf_netx90_blinki_com = env_netx90_blinki_com.Elf('targets/netx90_com/netx90_blinki_com.elf', src_netx90_blinki_com + env_netx90_blinki_com['PLATFORM_LIBRARY'])
 txt_netx90_blinki_com = env_netx90_blinki_com.ObjDump('targets/netx90_com/netx90_blinki_com.txt', elf_netx90_blinki_com, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
 env_netx56_intram = env_netx56_default.Clone()
+env_netx56_intram.Append(CPPPATH = astrIncludePaths)
 env_netx56_intram.Replace(LDFILE = 'src/netx56/netx56_intram.ld')
 src_netx56_intram = env_netx56_intram.SetBuildPath('targets/netx56_intram', 'src', sources)
 elf_netx56_intram = env_netx56_intram.Elf('targets/netx56_intram/netx56_intram.elf', src_netx56_intram + env_netx56_intram['PLATFORM_LIBRARY'])
@@ -165,12 +166,14 @@ bb0_netx56_intram = env_netx56_intram.BootBlock('targets/mmc/netx56/netx.rom', e
 bb1_netx56_intram = env_netx56_intram.BootBlock('targets/blinki_netx56_spi_intram.bin', elf_netx56_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
 
 env_netx56_sqixip = env_netx56_default.Clone()
+env_netx56_sqixip.Append(CPPPATH = astrIncludePaths)
 env_netx56_sqixip.Replace(LDFILE = 'src/netx56/netx56_sqixip.ld')
 src_netx56_sqixip = env_netx56_sqixip.SetBuildPath('targets/netx56_sqixip', 'src', sources)
 elf_netx56_sqixip = env_netx56_sqixip.Elf('targets/netx56_sqixip/netx56_sqixip.elf', src_netx56_sqixip + env_netx56_sqixip['PLATFORM_LIBRARY'])
 bb0_netx56_sqixip = env_netx56_sqixip.BootBlock('targets/blinki_netx56_sqixip.bin', elf_netx56_sqixip, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
 
 env_netx50_intram = env_netx50_default.Clone()
+env_netx50_intram.Append(CPPPATH = astrIncludePaths)
 env_netx50_intram.Replace(LDFILE = 'src/netx50/netx50_intram.ld')
 src_netx50_intram = env_netx50_intram.SetBuildPath('targets/netx50_intram', 'src', sources)
 elf_netx50_intram = env_netx50_intram.Elf('targets/netx50_intram/netx50_intram.elf', src_netx50_intram + env_netx50_intram['PLATFORM_LIBRARY'])
@@ -179,6 +182,7 @@ bb1_netx50_intram = env_netx50_intram.BootBlock('targets/blinki_netx50_spi_intra
 bb2_netx50_intram = env_netx50_intram.BootBlock('targets/blinki_netx50_pfl16_intram.bin', elf_netx50_intram, BOOTBLOCK_SRC='SRB_PF_GEN_16', BOOTBLOCK_DST='INTRAM')
 
 env_netx10_intram = env_netx10_default.Clone()
+env_netx10_intram.Append(CPPPATH = astrIncludePaths)
 env_netx10_intram.Replace(LDFILE = 'src/netx10/netx10_intram.ld')
 src_netx10_intram = env_netx10_intram.SetBuildPath('targets/netx10_intram', 'src', sources)
 elf_netx10_intram = env_netx10_intram.Elf('targets/netx10_intram/netx10_intram.elf', src_netx10_intram + env_netx10_intram['PLATFORM_LIBRARY'])
@@ -186,6 +190,7 @@ bb0_netx10_intram = env_netx10_intram.BootBlock('targets/mmc/netx10/netx.rom', e
 bb1_netx10_intram = env_netx10_intram.BootBlock('targets/blinki_netx10_spi_intram.bin', elf_netx10_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
 
 env_netx10_sqixip = env_netx10_default.Clone()
+env_netx10_sqixip.Append(CPPPATH = astrIncludePaths)
 env_netx10_sqixip.Replace(LDFILE = 'src/netx10/netx10_sqixip.ld')
 src_netx10_sqixip = env_netx10_sqixip.SetBuildPath('targets/netx10_sqixip', 'src', sources)
 elf_netx10_sqixip = env_netx10_sqixip.Elf('targets/netx10_sqixip/netx10_sqixip.elf', src_netx10_sqixip + env_netx10_sqixip['PLATFORM_LIBRARY'])
