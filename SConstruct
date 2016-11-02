@@ -44,29 +44,23 @@ env_cortexM4 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc
 astrIncludePaths = ['src', '#platform/src', '#platform/src/lib', '#targets/version']
 
 
-env_netx4000_relaxed_default = env_cortexR7.CreateCompilerEnv('ASIC_TYP_NETX4000_RELAXED', ['arch=armv7', 'thumb'], ['arch=armv7-r', 'thumb'])
+env_netx4000_relaxed_default = env_cortexR7.CreateCompilerEnv('NETX4000_RELAXED', ['arch=armv7', 'thumb'], ['arch=armv7-r', 'thumb'])
 env_netx4000_relaxed_default.Append(CPPPATH = astrIncludePaths)
-env_netx4000_relaxed_default.Replace(BOOTBLOCK_CHIPTYPE = '4000_RELAXED')
 
-env_netx500_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX500', ['arch=armv5te'])
+env_netx500_default = env_arm9.CreateCompilerEnv('NETX500', ['arch=armv5te'])
 env_netx500_default.Append(CPPPATH = astrIncludePaths)
-env_netx500_default.Replace(BOOTBLOCK_CHIPTYPE = 500)
 
-env_netx90_mpw_default = env_cortexM4.CreateCompilerEnv('ASIC_TYP_NETX90_MPW', ['arch=armv7', 'thumb'], ['arch=armv7e-m', 'thumb'])
+env_netx90_mpw_default = env_cortexM4.CreateCompilerEnv('NETX90_MPW', ['arch=armv7', 'thumb'], ['arch=armv7e-m', 'thumb'])
 env_netx90_mpw_default.Append(CPPPATH = astrIncludePaths)
-env_netx90_mpw_default.Replace(BOOTBLOCK_CHIPTYPE = '90_MPW')
 
-env_netx56_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX56', ['arch=armv5te'])
+env_netx56_default = env_arm9.CreateCompilerEnv('NETX56', ['arch=armv5te'])
 env_netx56_default.Append(CPPPATH = astrIncludePaths)
-env_netx56_default.Replace(BOOTBLOCK_CHIPTYPE = 56)
 
-env_netx50_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX50', ['arch=armv5te'])
+env_netx50_default = env_arm9.CreateCompilerEnv('NETX50', ['arch=armv5te'])
 env_netx50_default.Append(CPPPATH = astrIncludePaths)
-env_netx50_default.Replace(BOOTBLOCK_CHIPTYPE = 50)
 
-env_netx10_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX10', ['arch=armv5te'])
+env_netx10_default = env_arm9.CreateCompilerEnv('NETX10', ['arch=armv5te'])
 env_netx10_default.Append(CPPPATH = astrIncludePaths)
-env_netx10_default.Replace(BOOTBLOCK_CHIPTYPE = 10)
 
 Export('env_netx4000_relaxed_default', 'env_netx500_default', 'env_netx90_mpw_default', 'env_netx56_default', 'env_netx50_default', 'env_netx10_default')
 
