@@ -24,8 +24,7 @@ MEMORY
 {
 	ASSERT_EMPTY(rwx)  : ORIGIN = 0x00000000, LENGTH = 0
 
-	INTRAM(rwx)        : ORIGIN = 0x08000000, LENGTH = 0x00080000
-	DPM(rwx)           : ORIGIN = 0x08080000, LENGTH = 0x00010000
+	INTRAM(rx)         : ORIGIN = 0x000200C0, LENGTH = 0x0001FF40
 }
 
 
@@ -34,8 +33,7 @@ SECTIONS
 {
 	.assert_empty (NOLOAD) :
 	{
-		/* NOTE: include all sections here whioch should be empty.
-		 */
+		/* NOTE: include all sections here which should be empty. */
 		*(.data)
 		*(.glue*)
 		*(.vfp11_veneer)
@@ -43,14 +41,7 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.stack 0x08000004 :
-	{
-		. = . + 0x7ffc;
-		PROVIDE ( stack_top = . );
-	} >INTRAM
-
-
-	.code 0x08008000 :
+	.code ORIGIN(INTRAM) :
 	{
 		KEEP(*(.header))
 		*(.init_code)
@@ -68,13 +59,13 @@ SECTIONS
 		PROVIDE ( __bss_end__ = . );
 	} >INTRAM
 
-	.dpm ORIGIN(DPM) :
+	.stack :
 	{
-		PROVIDE ( aulDpmStart = . );
-		. = . + 0x10000;
-	} >DPM
-	
-	
+		. = ORIGIN(INTRAM) + LENGTH(INTRAM);
+		PROVIDE ( stack_top = . );
+	} >INTRAM
+
+
 	/* Stabs debugging sections.  */
 	.stab          0 : { *(.stab) }
 	.stabstr       0 : { *(.stabstr) }
@@ -84,8 +75,8 @@ SECTIONS
 	.stab.indexstr 0 : { *(.stab.indexstr) }
 	.comment       0 : { *(.comment) }
 	/* DWARF debug sections.
-		Symbols in the DWARF debugging sections are relative to the beginning
-		of the section so we begin them at 0.  */
+	Symbols in the DWARF debugging sections are relative to the beginning
+	of the section so we begin them at 0.  */
 	/* DWARF 1 */
 	.debug          0 : { *(.debug) }
 	.line           0 : { *(.line) }

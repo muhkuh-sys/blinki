@@ -1,6 +1,7 @@
 
 #include <string.h>
 
+#include "asic_types.h"
 #include "uart_standalone.h"
 #include "serial_vectors.h"
 
@@ -12,7 +13,7 @@
 
 /*-------------------------------------------------------------------------*/
 
-#if ASIC_TYP==10
+#if ASIC_TYP==ASIC_TYP_NETX10
 /* NXHX10-ETM */
 static const UART_CONFIGURATION_T tUartCfg =
 {
@@ -22,17 +23,19 @@ static const UART_CONFIGURATION_T tUartCfg =
 	.uc_cts_mmio = 0xffU,
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
-#elif ASIC_TYP==56
+
+#elif ASIC_TYP==ASIC_TYP_NETX56
 /* NXHX51-ETM */
 static const UART_CONFIGURATION_T tUartCfg =
 {
-	.uc_rx_mmio = 34U,
-	.uc_tx_mmio = 35U,
+	.uc_rx_mmio = 4U,
+	.uc_tx_mmio = 5U,
 	.uc_rts_mmio = 0xffU,
 	.uc_cts_mmio = 0xffU,
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
-#elif ASIC_TYP==50
+
+#elif ASIC_TYP==ASIC_TYP_NETX50
 /* NXHX50-ETM */
 static const UART_CONFIGURATION_T tUartCfg =
 {
@@ -42,19 +45,17 @@ static const UART_CONFIGURATION_T tUartCfg =
 	.uc_cts_mmio = 0xffU,
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
-#elif ASIC_TYP==100 || ASIC_TYP==500
+
+#elif ASIC_TYP==ASIC_TYP_NETX500
 static const UART_CONFIGURATION_T tUartCfg =
 {
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
-#elif ASIC_TYP==4000
+
+#elif ASIC_TYP==ASIC_TYP_NETX4000_RELAXED
 #       if !defined(CFG_USE_RAP_UART)
 static const UART_CONFIGURATION_T tUartCfg =
 {
-	.uc_rx_mmio = 26U,
-	.uc_tx_mmio = 27U,
-	.uc_rts_mmio = 0xffU,
-	.uc_cts_mmio = 0xffU,
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
 };
 #       else
@@ -72,6 +73,16 @@ static const RAP_UART_CONFIGURATION_T tUartCfg =
 };
 
 #       endif
+
+#elif ASIC_TYP==ASIC_TYP_NETX90_MPW
+static const UART_CONFIGURATION_T tUartCfg =
+{
+	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
+};
+
+#else
+#       error "Unsupported ASIC_TYPE!"
+
 #endif
 
 

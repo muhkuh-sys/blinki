@@ -30,8 +30,11 @@ Import('env_default')
 # Create a build environment for the ARM9 based netX chips.
 env_arm9 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.7', 'asciidoc'])
 
-# Create a build environment for the Cortex-R based netX chips.
-env_cortex7 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc'])
+# Create a build environment for the Cortex-R7 and Cortex-A9 based netX chips.
+env_cortexR7 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc'])
+
+# Create a build environment for the Cortex-M4 based netX chips.
+env_cortexM4 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc'])
 
 
 #----------------------------------------------------------------------------
@@ -41,27 +44,31 @@ env_cortex7 = env_default.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc'
 astrIncludePaths = ['src', '#platform/src', '#platform/src/lib', '#targets/version']
 
 
-env_netx4000_default = env_cortex7.CreateCompilerEnv('4000', ['arch=armv7', 'thumb'], ['arch=armv7-r', 'thumb'])
-env_netx4000_default.Append(CPPPATH = astrIncludePaths)
-env_netx4000_default.Replace(BOOTBLOCK_CHIPTYPE = 4000)
+env_netx4000_relaxed_default = env_cortexR7.CreateCompilerEnv('ASIC_TYP_NETX4000_RELAXED', ['arch=armv7', 'thumb'], ['arch=armv7-r', 'thumb'])
+env_netx4000_relaxed_default.Append(CPPPATH = astrIncludePaths)
+env_netx4000_relaxed_default.Replace(BOOTBLOCK_CHIPTYPE = '4000_RELAXED')
 
-env_netx500_default = env_arm9.CreateCompilerEnv('500', ['arch=armv5te'])
+env_netx500_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX500', ['arch=armv5te'])
 env_netx500_default.Append(CPPPATH = astrIncludePaths)
 env_netx500_default.Replace(BOOTBLOCK_CHIPTYPE = 500)
 
-env_netx56_default = env_arm9.CreateCompilerEnv('56', ['arch=armv5te'])
+env_netx90_mpw_default = env_cortexM4.CreateCompilerEnv('ASIC_TYP_NETX90_MPW', ['arch=armv7', 'thumb'], ['arch=armv7e-m', 'thumb'])
+env_netx90_mpw_default.Append(CPPPATH = astrIncludePaths)
+env_netx90_mpw_default.Replace(BOOTBLOCK_CHIPTYPE = '90_MPW')
+
+env_netx56_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX56', ['arch=armv5te'])
 env_netx56_default.Append(CPPPATH = astrIncludePaths)
 env_netx56_default.Replace(BOOTBLOCK_CHIPTYPE = 56)
 
-env_netx50_default = env_arm9.CreateCompilerEnv('50', ['arch=armv5te'])
+env_netx50_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX50', ['arch=armv5te'])
 env_netx50_default.Append(CPPPATH = astrIncludePaths)
 env_netx50_default.Replace(BOOTBLOCK_CHIPTYPE = 50)
 
-env_netx10_default = env_arm9.CreateCompilerEnv('10', ['arch=armv5te'])
+env_netx10_default = env_arm9.CreateCompilerEnv('ASIC_TYP_NETX10', ['arch=armv5te'])
 env_netx10_default.Append(CPPPATH = astrIncludePaths)
 env_netx10_default.Replace(BOOTBLOCK_CHIPTYPE = 10)
 
-Export('env_netx4000_default', 'env_netx500_default', 'env_netx56_default', 'env_netx50_default', 'env_netx10_default')
+Export('env_netx4000_relaxed_default', 'env_netx500_default', 'env_netx90_mpw_default', 'env_netx56_default', 'env_netx50_default', 'env_netx10_default')
 
 
 #----------------------------------------------------------------------------
@@ -75,9 +82,9 @@ env_default.Version('#targets/version/version.h', 'templates/version.h')
 #
 # Build the platform libraries.
 #
-PLATFORM_LIB_CFG_BUILDS = [4000, 500, 56, 50, 10]
+PLATFORM_LIB_CFG_BUILDS = ['4000_RELAXED', '500', '90_MPW', '56', '50', '10']
 SConscript('platform/SConscript', exports='PLATFORM_LIB_CFG_BUILDS')
-Import('platform_lib_netx4000', 'platform_lib_netx500', 'platform_lib_netx56', 'platform_lib_netx50', 'platform_lib_netx10')
+Import('platform_lib_netx4000_relaxed', 'platform_lib_netx500', 'platform_lib_netx90_mpw', 'platform_lib_netx56', 'platform_lib_netx50', 'platform_lib_netx10')
 
 
 #----------------------------------------------------------------------------
@@ -86,7 +93,7 @@ Import('platform_lib_netx4000', 'platform_lib_netx500', 'platform_lib_netx56', '
 sources = """
 	src/hboot_dpm.c
 	src/header.c
-	src/init_netx_test.S
+	src/init.S
 	src/main.c
 	src/uart_standalone.c
 """
@@ -106,40 +113,40 @@ sources_cr7_openfirewalls = """
 # Build all files.
 #
 # open firewalls from RAP into netX area at netX 4000
-env_netx4000_cr7_openfirewalls = env_netx4000_default.Clone()
+env_netx4000_cr7_openfirewalls = env_netx4000_relaxed_default.Clone()
 env_netx4000_cr7_openfirewalls.Replace(LDFILE = 'src/netx4000/netx4000_cr7_intram.ld')
 src_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.SetBuildPath('targets/netx4000_openfirewalls', 'src', sources_cr7_openfirewalls)
-elf_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.Elf('targets/netx4000_openfirewalls/netx4000_cr7_openfirewalls.elf', src_netx4000_cr7_openfirewalls + platform_lib_netx4000)
+elf_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.Elf('targets/netx4000_openfirewalls/netx4000_cr7_openfirewalls.elf', src_netx4000_cr7_openfirewalls + platform_lib_netx4000_relaxed)
 txt_netx4000_cr7_openfirewalls = env_netx4000_cr7_openfirewalls.ObjDump('targets/netx4000_openfirewalls/netx4000_cr7_openfirewalls.txt', elf_netx4000_cr7_openfirewalls, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
 # Blinki for the CR7.
-env_netx4000_blinki_cr7 = env_netx4000_default.Clone()
+env_netx4000_blinki_cr7 = env_netx4000_relaxed_default.Clone()
 env_netx4000_blinki_cr7.Replace(LDFILE = 'src/netx4000/netx4000_cr7_intram.ld')
 src_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.SetBuildPath('targets/netx4000_cr7', 'src', sources)
-elf_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.Elf('targets/netx4000_cr7/netx4000_blinki_cr7.elf', src_netx4000_blinki_cr7 + platform_lib_netx4000)
+elf_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.Elf('targets/netx4000_cr7/netx4000_blinki_cr7.elf', src_netx4000_blinki_cr7 + platform_lib_netx4000_relaxed)
 txt_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.ObjDump('targets/netx4000_cr7/netx4000_blinki_cr7.txt', elf_netx4000_blinki_cr7, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
 # Blinki for one of the CA9 cores.
-env_netx4000_blinki_ca9 = env_netx4000_default.Clone()
+env_netx4000_blinki_ca9 = env_netx4000_relaxed_default.Clone()
 env_netx4000_blinki_ca9.Replace(LDFILE = 'src/netx4000/netx4000_ca9_intram.ld')
 env_netx4000_blinki_ca9.Append(CPPPATH = ['src/netx4000'])
 env_netx4000_blinki_ca9.Append(CPPDEFINES = [['CFG_USE_RAP_UART', '1']])
 src_netx4000_blinki_ca9 = env_netx4000_blinki_ca9.SetBuildPath('targets/netx4000_ca9', 'src', sources + sources_netx4000_ca9)
-elf_netx4000_blinki_ca9 = env_netx4000_blinki_ca9.Elf('targets/netx4000_ca9/netx4000_blinki_ca9.elf', src_netx4000_blinki_ca9 + platform_lib_netx4000)
+elf_netx4000_blinki_ca9 = env_netx4000_blinki_ca9.Elf('targets/netx4000_ca9/netx4000_blinki_ca9.elf', src_netx4000_blinki_ca9 + platform_lib_netx4000_relaxed)
 txt_netx4000_blinki_ca9 = env_netx4000_blinki_ca9.ObjDump('targets/netx4000_ca9/netx4000_blinki_ca9.txt', elf_netx4000_blinki_ca9, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
 # Build 3 hboot images to be loaded into netX 4000
 # hboot image: RUN blinki at CR7
-bb0_netx4000_intram = env_netx4000_blinki_cr7.HBootImage('targets/blinki_netx4000_cr7_spi_intram.bin', 'src/netx4000/CR7_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7[0]}))
-bb1_netx4000_intram = env_netx4000_blinki_cr7.HBootImage('targets/mmc/netx4000/cr7/netx.rom', 'src/netx4000/CR7_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7[0]}))
+bb0_netx4000_intram = env_netx4000_blinki_cr7.HBootImage('targets/blinki_netx4000_cr7_spi_intram.bin', 'src/netx4000/CR7_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7[0]}))
+bb1_netx4000_intram = env_netx4000_blinki_cr7.HBootImage('targets/mmc/netx4000/cr7/netx.rom', 'src/netx4000/CR7_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7[0]}))
 
 # hboot image: open firewalls from RAP into netX area; RUN blinki at CR9 core 0; keep CR7 inside endless loop
-bb2_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx4000_ca9core0_spi_intram.bin', 'src/netx4000/CA9core0_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_ca9[0]}))
-bb3_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core0/netx.rom', 'src/netx4000/CA9core0_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_ca9[0]}))
+bb2_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx4000_ca9core0_spi_intram.bin', 'src/netx4000/CA9core0_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_ca9[0]}))
+bb3_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core0/netx.rom', 'src/netx4000/CA9core0_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core0': elf_netx4000_blinki_ca9[0]}))
 
 # hboot image: open firewalls from RAP into netX area; RUN blinki at CR9 core 1; keep CR7 inside endless loop
-bb4_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx4000_ca9core1_spi_intram.bin', 'src/netx4000/CA9core1_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9[0]}))
-bb5_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core1/netx.rom', 'src/netx4000/CA9core1_to_INTRAM.xml', KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9[0]}))
+bb4_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx4000_ca9core1_spi_intram.bin', 'src/netx4000/CA9core1_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9[0]}))
+bb5_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core1/netx.rom', 'src/netx4000/CA9core1_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9[0]}))
 
 
 
@@ -149,6 +156,13 @@ src_netx500_intram = env_netx500_intram.SetBuildPath('targets/netx500_intram', '
 elf_netx500_intram = env_netx500_intram.Elf('targets/netx500_intram/netx500_intram.elf', src_netx500_intram + platform_lib_netx500)
 bb0_netx500_intram = env_netx500_intram.BootBlock('targets/mmc/netx500/netx.rom', elf_netx500_intram, BOOTBLOCK_SRC='MMC', BOOTBLOCK_DST='INTRAM')
 bb1_netx500_intram = env_netx500_intram.BootBlock('targets/blinki_netx500_spi_intram.bin', elf_netx500_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
+
+# Blinki for the netX90 communication CPU.
+env_netx90_blinki_com = env_netx90_mpw_default.Clone()
+env_netx90_blinki_com.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
+src_netx90_blinki_com = env_netx90_blinki_com.SetBuildPath('targets/netx90_com', 'src', sources)
+elf_netx90_blinki_com = env_netx90_blinki_com.Elf('targets/netx90_com/netx90_blinki_com.elf', src_netx90_blinki_com + platform_lib_netx90_mpw)
+txt_netx90_blinki_com = env_netx90_blinki_com.ObjDump('targets/netx90_com/netx90_blinki_com.txt', elf_netx90_blinki_com, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
 env_netx56_intram = env_netx56_default.Clone()
 env_netx56_intram.Replace(LDFILE = 'src/netx56/netx56_intram.ld')
