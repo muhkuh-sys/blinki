@@ -132,13 +132,21 @@ bb0_netx500_intram = env_netx500_intram.BootBlock('targets/mmc/netx500/netx.rom'
 bb1_netx500_intram = env_netx500_intram.BootBlock('targets/blinki_netx500_spi_intram.bin', elf_netx500_intram, BOOTBLOCK_SRC='SPI_GEN_10', BOOTBLOCK_DST='INTRAM')
 
 # Blinki for the netX90 communication CPU.
-env_netx90_blinki_com = atEnv.NETX90_MPW.Clone()
-env_netx90_blinki_com.Append(CPPPATH = astrIncludePaths)
-env_netx90_blinki_com.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
-src_netx90_blinki_com = env_netx90_blinki_com.SetBuildPath('targets/netx90_com', 'src', sources)
-elf_netx90_blinki_com = env_netx90_blinki_com.Elf('targets/netx90_com/netx90_blinki_com.elf', src_netx90_blinki_com + env_netx90_blinki_com['PLATFORM_LIBRARY'])
-txt_netx90_blinki_com = env_netx90_blinki_com.ObjDump('targets/netx90_com/netx90_blinki_com.txt', elf_netx90_blinki_com, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
-bb0_netx90_intram_com = env_netx90_blinki_com.HBootImage('targets/blinki_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_blinki_com}))
+env_netx90_com_intram = atEnv.NETX90_MPW.Clone()
+env_netx90_com_intram.Append(CPPPATH = astrIncludePaths)
+env_netx90_com_intram.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
+src_netx90_com_intram = env_netx90_com_intram.SetBuildPath('targets/netx90_com_intram', 'src', sources)
+elf_netx90_com_intram = env_netx90_com_intram.Elf('targets/netx90_com_intram/blinki_netx90_com_intram.elf', src_netx90_com_intram + env_netx90_com_intram['PLATFORM_LIBRARY'])
+txt_netx90_com_intram = env_netx90_com_intram.ObjDump('targets/netx90_com_intram/blinki_netx90_com_intram.txt', elf_netx90_com_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_com_intram = env_netx90_com_intram.HBootImage('targets/blinki_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_intram}))
+
+env_netx90_com_sqirom = atEnv.NETX90_MPW.Clone()
+env_netx90_com_sqirom.Append(CPPPATH = astrIncludePaths)
+env_netx90_com_sqirom.Replace(LDFILE = 'src/netx90/netx90_com_sqirom.ld')
+src_netx90_com_sqirom = env_netx90_com_sqirom.SetBuildPath('targets/netx90_com_sqirom', 'src', sources)
+elf_netx90_com_sqirom = env_netx90_com_sqirom.Elf('targets/netx90_com_sqirom/blinki_netx90_com_sqirom.elf', src_netx90_com_sqirom + env_netx90_com_sqirom['PLATFORM_LIBRARY'])
+txt_netx90_com_sqirom = env_netx90_com_sqirom.ObjDump('targets/netx90_com_sqirom/blinki_netx90_com_sqirom.txt', elf_netx90_com_sqirom, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_com_sqirom = env_netx90_com_sqirom.HBootImage('targets/blinki_netx90_com_sqirom.bin', 'src/netx90/COM_SQIROM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_sqirom}))
 
 env_netx56_intram = atEnv.NETX56.Clone()
 env_netx56_intram.Append(CPPPATH = astrIncludePaths)
