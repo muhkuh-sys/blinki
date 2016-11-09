@@ -30,6 +30,17 @@ void blinki_main(void *pvBootBlock __attribute__((unused)), unsigned long ulBoot
 	int iBootSourceIsDPM;
 
 
+	/* FIXME: this is special for the netx90 test. Remove it. */
+#if ASIC_TYP==ASIC_TYP_NETX90_MPW
+	HOSTDEF(ptAsicCtrlArea);
+	unsigned long ulValue;
+
+
+	ulValue  = ptAsicCtrlArea->asIo_config[2].ulConfig;
+	ulValue |= HOSTMSK(io_config2_sel_uart_com);
+	ptAsicCtrlArea->ulAsic_ctrl_access_key = ptAsicCtrlArea->ulAsic_ctrl_access_key;
+	ptAsicCtrlArea->asIo_config[2].ulConfig = ulValue;
+#endif
 	systime_init();
 	uart_standalone_initialize();
 
