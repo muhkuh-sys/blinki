@@ -28,8 +28,8 @@ static const UART_CONFIGURATION_T tUartCfg =
 /* NXHX51-ETM */
 static const UART_CONFIGURATION_T tUartCfg =
 {
-	.uc_rx_mmio = 4U,
-	.uc_tx_mmio = 5U,
+	.uc_rx_mmio = 34U,
+	.uc_tx_mmio = 35U,
 	.uc_rts_mmio = 0xffU,
 	.uc_cts_mmio = 0xffU,
 	.us_baud_div = UART_BAUDRATE_DIV(UART_BAUDRATE_115200)
