@@ -70,4 +70,3 @@ void blinki_main(void *pvBootBlock __attribute__((unused)), unsigned long ulBoot
 		uprintf("blinki at %dms.\n", systime_get_ms());
 	};
 }
-
