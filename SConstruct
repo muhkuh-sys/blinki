@@ -41,6 +41,7 @@ env_cortexR7.CreateCompilerEnv('NETX4000_RELAXED', ['arch=armv7', 'thumb'], ['ar
 # Create a build environment for the Cortex-M4 based netX chips.
 env_cortexM4 = atEnv.DEFAULT.CreateEnvironment(['gcc-arm-none-eabi-4.9', 'asciidoc'])
 env_cortexM4.CreateCompilerEnv('NETX90_MPW', ['arch=armv7', 'thumb'], ['arch=armv7e-m', 'thumb'])
+env_cortexM4.CreateCompilerEnv('NETX90_MPW_APP', ['arch=armv7', 'thumb'], ['arch=armv7e-m', 'thumb'])
 
 # Build the platform libraries.
 SConscript('platform/SConscript')
@@ -61,11 +62,13 @@ sources = """
 	src/header.c
 	src/init.S
 	src/main.c
-	src/uart_standalone.c
+"""
+
+sources_netx90_mpw_app = """
+	src/netx90/mled.c
 """
 
 sources_netx4000_ca9 = """
-	src/netx4000/driver_rap_uart.c
 	src/netx4000/portcontrol.c
 """
 
@@ -147,6 +150,16 @@ src_netx90_com_sqirom = env_netx90_com_sqirom.SetBuildPath('targets/netx90_com_s
 elf_netx90_com_sqirom = env_netx90_com_sqirom.Elf('targets/netx90_com_sqirom/blinki_netx90_com_sqirom.elf', src_netx90_com_sqirom + env_netx90_com_sqirom['PLATFORM_LIBRARY'])
 txt_netx90_com_sqirom = env_netx90_com_sqirom.ObjDump('targets/netx90_com_sqirom/blinki_netx90_com_sqirom.txt', elf_netx90_com_sqirom, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 bb0_netx90_com_sqirom = env_netx90_com_sqirom.HBootImage('targets/blinki_netx90_com_sqirom.bin', 'src/netx90/COM_SQIROM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_sqirom}))
+
+# Blinki for the netX90 application CPU.
+env_netx90_app = atEnv.NETX90_MPW_APP.Clone()
+env_netx90_app.Append(CPPPATH = astrIncludePaths)
+env_netx90_app.Replace(LDFILE = 'src/netx90/netx90_app.ld')
+src_netx90_app = env_netx90_app.SetBuildPath('targets/netx90_app', 'src', sources)
+elf_netx90_app = env_netx90_app.Elf('targets/netx90_app/blinki_netx90_app.elf', src_netx90_app + env_netx90_app['PLATFORM_LIBRARY'])
+txt_netx90_app = env_netx90_app.ObjDump('targets/netx90_app/blinki_netx90_app.txt', elf_netx90_app, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_app = env_netx90_app.ObjCopy('targets/netx90_app/blinki_netx90_app.bin', elf_netx90_app)
+#bb0_netx90_app = env_netx90_app.HBootImage('targets/blinki_netx90_app.bin', 'src/netx90/APP.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_app}))
 
 env_netx56_intram = atEnv.NETX56.Clone()
 env_netx56_intram.Append(CPPPATH = astrIncludePaths)

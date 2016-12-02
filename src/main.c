@@ -23,6 +23,9 @@ extern volatile unsigned long aulPcieDpmStart[16384];
 #endif
 
 
+UART_STANDALONE_DEFINE_GLOBALS
+
+
 void blinki_main(void *pvBootBlock, unsigned long ulBootSource);
 void blinki_main(void *pvBootBlock __attribute__((unused)), unsigned long ulBootSource)
 {
