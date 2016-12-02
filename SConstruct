@@ -64,8 +64,12 @@ sources = """
 	src/main.c
 """
 
-sources_netx90_mpw_app = """
-	src/netx90/mled.c
+sources_netx90_com_led = """
+	src/hboot_dpm.c
+	src/header.c
+	src/init.S
+	src/main_com_led.c
+	src/netx90/comled.c
 """
 
 sources_netx4000_ca9 = """
@@ -150,6 +154,15 @@ src_netx90_com_sqirom = env_netx90_com_sqirom.SetBuildPath('targets/netx90_com_s
 elf_netx90_com_sqirom = env_netx90_com_sqirom.Elf('targets/netx90_com_sqirom/blinki_netx90_com_sqirom.elf', src_netx90_com_sqirom + env_netx90_com_sqirom['PLATFORM_LIBRARY'])
 txt_netx90_com_sqirom = env_netx90_com_sqirom.ObjDump('targets/netx90_com_sqirom/blinki_netx90_com_sqirom.txt', elf_netx90_com_sqirom, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 bb0_netx90_com_sqirom = env_netx90_com_sqirom.HBootImage('targets/blinki_netx90_com_sqirom.bin', 'src/netx90/COM_SQIROM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_sqirom}))
+
+# Blinki for the COM0 LED on the netX90 communication CPU.
+env_netx90_com_comled_intram = atEnv.NETX90_MPW.Clone()
+env_netx90_com_comled_intram.Append(CPPPATH = astrIncludePaths)
+env_netx90_com_comled_intram.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
+src_netx90_com_comled_intram = env_netx90_com_comled_intram.SetBuildPath('targets/netx90_com_comled_intram', 'src', sources_netx90_com_led)
+elf_netx90_com_comled_intram = env_netx90_com_comled_intram.Elf('targets/netx90_com_comled_intram/blinki_netx90_com_comled_intram.elf', src_netx90_com_comled_intram + env_netx90_com_comled_intram['PLATFORM_LIBRARY'])
+txt_netx90_com_comled_intram = env_netx90_com_comled_intram.ObjDump('targets/netx90_com_comled_intram/blinki_netx90_com_comled_intram.txt', elf_netx90_com_comled_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_com_comled_intram = env_netx90_com_comled_intram.HBootImage('targets/blinki_netx90_com_comled_intram.bin', 'src/netx90/COM_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_intram}))
 
 # Blinki for the netX90 application CPU.
 env_netx90_app = atEnv.NETX90_MPW_APP.Clone()
