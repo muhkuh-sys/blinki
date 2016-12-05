@@ -172,7 +172,7 @@ src_netx90_com_comled_iflash = env_netx90_com_comled_iflash.SetBuildPath('target
 elf_netx90_com_comled_iflash = env_netx90_com_comled_iflash.Elf('targets/netx90_com_comled_iflash/blinki_netx90_com_comled_iflash.elf', src_netx90_com_comled_iflash + env_netx90_com_comled_iflash['PLATFORM_LIBRARY'])
 txt_netx90_com_comled_iflash = env_netx90_com_comled_iflash.ObjDump('targets/netx90_com_comled_iflash/blinki_netx90_com_comled_iflash.txt', elf_netx90_com_comled_iflash, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 bb0_netx90_com_comled_iflash = env_netx90_com_comled_iflash.HBootImage('targets/blinki_netx90_com_comled_iflash.bin', 'src/netx90/COM_IFLASH_XIP.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_iflash}))
-#bb1_netx90_com_comled_iflash = env_netx90_com_comled_iflash.HBootImage('targets/blinki_netx90_com_comled_iflash_app.bin', 'src/netx90/COM_IFLASH_XIP_ACTIVATE_APP.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_iflash}))
+bb1_netx90_com_comled_iflash = env_netx90_com_comled_iflash.HBootImage('targets/blinki_netx90_com_comled_iflash_app.bin', 'src/netx90/COM_IFLASH_XIP_ACTIVATE_APP.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_iflash}))
 
 # Blinki for the COM0 LED on the netX90 communication CPU.
 env_netx90_com_comled_intram = atEnv.NETX90_MPW.Clone()
