@@ -2,11 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="mbs/setup2html.xsl"?>
 
 <muhkuh_buildsystem project="blinki">
-	<project_version>
-		<major>1</major>
-		<minor>0</minor>
-		<micro>1</micro>
-	</project_version>
+	<project_version>1.0.1</project_version>
 
 	<scons>
 		<group>org.scons</group>
