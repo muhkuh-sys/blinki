@@ -24,8 +24,8 @@ MEMORY
 {
 	ASSERT_EMPTY(rwx)  : ORIGIN = 0x00000000, LENGTH = 0
 
-	IFLASH(rx)         : ORIGIN = 0x00000000, LENGTH = 0x00080000
-	INTRAM(rx)         : ORIGIN = 0x000B0000, LENGTH = 0x00010000
+	INTRAM(rx)         : ORIGIN = 0x000200C0, LENGTH = 0x0001FF40
+	IFLASH(rx)         : ORIGIN = 0x00101000, LENGTH = 0x0007F000
 }
 
 
@@ -42,23 +42,17 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.header ORIGIN(IFLASH) :
-	{
-		KEEP(*(.cm4_app_vector_table_iflash))
-		KEEP(*(.app_cpu_hboot_header))
-	} >IFLASH
-
-	.code :
+	.code ORIGIN(IFLASH) :
 	{
 		KEEP(*(.header))
 		*(.init_code)
 		*(.text*)
-
+	
 		/* .rodata section which is used for read-only data (constants) */
 		*(.rodata*)
 	} >IFLASH
 
-	.bss :
+	.bss ORIGIN(INTRAM):
 	{
 		PROVIDE ( __bss_start__ = . );
 		*(.bss)
@@ -70,7 +64,6 @@ SECTIONS
 	{
 		. = ORIGIN(INTRAM) + LENGTH(INTRAM);
 		PROVIDE ( stack_top = . );
-		PROVIDE ( __STACK_TOP_APP_CPU__ = . );
 	} >INTRAM
 
 

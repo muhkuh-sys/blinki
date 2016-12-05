@@ -64,6 +64,15 @@ sources = """
 	src/main.c
 """
 
+sources_netx90_app = """
+	src/hboot_dpm.c
+	src/header.c
+	src/init.S
+	src/main.c
+	src/netx90/app_hboot_header_iflash.c
+	src/netx90/cm4_app_vector_table_iflash.c
+"""
+
 sources_netx90_com_led = """
 	src/hboot_dpm.c
 	src/header.c
@@ -156,6 +165,15 @@ txt_netx90_com_sqirom = env_netx90_com_sqirom.ObjDump('targets/netx90_com_sqirom
 bb0_netx90_com_sqirom = env_netx90_com_sqirom.HBootImage('targets/blinki_netx90_com_sqirom.bin', 'src/netx90/COM_SQIROM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_sqirom}))
 
 # Blinki for the COM0 LED on the netX90 communication CPU.
+env_netx90_com_comled_iflash = atEnv.NETX90_MPW.Clone()
+env_netx90_com_comled_iflash.Append(CPPPATH = astrIncludePaths)
+env_netx90_com_comled_iflash.Replace(LDFILE = 'src/netx90/netx90_com_iflash.ld')
+src_netx90_com_comled_iflash = env_netx90_com_comled_iflash.SetBuildPath('targets/netx90_com_comled_iflash', 'src', sources_netx90_com_led)
+elf_netx90_com_comled_iflash = env_netx90_com_comled_iflash.Elf('targets/netx90_com_comled_iflash/blinki_netx90_com_comled_iflash.elf', src_netx90_com_comled_iflash + env_netx90_com_comled_iflash['PLATFORM_LIBRARY'])
+txt_netx90_com_comled_iflash = env_netx90_com_comled_iflash.ObjDump('targets/netx90_com_comled_iflash/blinki_netx90_com_comled_iflash.txt', elf_netx90_com_comled_iflash, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_com_comled_iflash = env_netx90_com_comled_iflash.HBootImage('targets/blinki_netx90_com_comled_iflash.bin', 'src/netx90/COM_IFLASH_XIP.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_iflash}))
+
+# Blinki for the COM0 LED on the netX90 communication CPU.
 env_netx90_com_comled_intram = atEnv.NETX90_MPW.Clone()
 env_netx90_com_comled_intram.Append(CPPPATH = astrIncludePaths)
 env_netx90_com_comled_intram.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
@@ -168,7 +186,7 @@ bb0_netx90_com_comled_intram = env_netx90_com_comled_intram.HBootImage('targets/
 env_netx90_app = atEnv.NETX90_MPW_APP.Clone()
 env_netx90_app.Append(CPPPATH = astrIncludePaths)
 env_netx90_app.Replace(LDFILE = 'src/netx90/netx90_app.ld')
-src_netx90_app = env_netx90_app.SetBuildPath('targets/netx90_app', 'src', sources)
+src_netx90_app = env_netx90_app.SetBuildPath('targets/netx90_app', 'src', sources_netx90_app)
 elf_netx90_app = env_netx90_app.Elf('targets/netx90_app/blinki_netx90_app.elf', src_netx90_app + env_netx90_app['PLATFORM_LIBRARY'])
 txt_netx90_app = env_netx90_app.ObjDump('targets/netx90_app/blinki_netx90_app.txt', elf_netx90_app, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 bb0_netx90_app = env_netx90_app.ObjCopy('targets/netx90_app/blinki_netx90_app.bin', elf_netx90_app)
