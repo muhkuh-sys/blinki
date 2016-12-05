@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<HBootImage type="REGULAR">
+<HBootImage type="REGULAR" device="SQIROM">
 	<Chunks>
 		<!-- TODO: Add option header for the hardware configuration. -->
 
