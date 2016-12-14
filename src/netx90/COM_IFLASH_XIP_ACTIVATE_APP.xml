@@ -7,7 +7,7 @@
 		     The chunk will start with the ID and length of 32 bits
 		     so that the chunks data starts exactly at 0x1000.
 		-->
-		<Skip absolute="0x03fe" />
+		<Skip absolute="0x0ff8" />
 
 		<!-- Load Programm for the COM CPU and start afterwards -->
 		<XIP>
