@@ -201,6 +201,17 @@ src_netx90_app_intram = env_netx90_app_intram.SetBuildPath('targets/netx90_app_i
 elf_netx90_app_intram = env_netx90_app_intram.Elf('targets/netx90_app_intram/blinki_netx90_app_intram.elf', src_netx90_app_intram + env_netx90_app_intram['PLATFORM_LIBRARY'])
 txt_netx90_app_intram = env_netx90_app_intram.ObjDump('targets/netx90_app_intram/blinki_netx90_app_intram.txt', elf_netx90_app_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
+# Blinki for the netX90 application and communication CPU running in SDRAM.
+env_netx90_app_sdram = atEnv.NETX90_MPW_APP.Clone()
+env_netx90_app_sdram.Append(CPPPATH = astrIncludePaths)
+env_netx90_app_sdram.Replace(LDFILE = 'src/netx90/netx90_sdram.ld')
+src_netx90_app_sdram = env_netx90_app_sdram.SetBuildPath('targets/netx90_app_sdram', 'src', sources)
+elf_netx90_app_sdram = env_netx90_app_sdram.Elf('targets/netx90_app_sdram/blinki_netx90_app_sdram.elf', src_netx90_app_sdram + env_netx90_app_sdram['PLATFORM_LIBRARY'])
+txt_netx90_app_sdram = env_netx90_app_sdram.ObjDump('targets/netx90_app_sdram/blinki_netx90_app_sdram.txt', elf_netx90_app_sdram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_app_sdram = env_netx90_app_sdram.HBootImage('targets/blinki_netx90_app_sdram.bin', 'src/netx90/APP_to_SDRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElf': elf_netx90_app_sdram}))
+
+bb0_netx90_com_pass_to_app_sdram = atEnv.NETX90_MPW.HBootImage('targets/netx90_com_pass_to_app_with_sdram_IS42S16800F-7BLI.bin', 'src/netx90/COM_pass_to_APP_with_SDRAM_IS42S16800F-7BLI.xml')
+
 env_netx56_intram = atEnv.NETX56.Clone()
 env_netx56_intram.Append(CPPPATH = astrIncludePaths)
 env_netx56_intram.Replace(LDFILE = 'src/netx56/netx56_intram.ld')
