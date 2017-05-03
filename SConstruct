@@ -114,6 +114,15 @@ src_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.SetBuildPath('targets/netx4000
 elf_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.Elf('targets/netx4000_cr7/netx4000_blinki_cr7.elf', src_netx4000_blinki_cr7 + env_netx4000_blinki_cr7['PLATFORM_LIBRARY'])
 txt_netx4000_blinki_cr7 = env_netx4000_blinki_cr7.ObjDump('targets/netx4000_cr7/netx4000_blinki_cr7.txt', elf_netx4000_blinki_cr7, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 
+# Blinki for the CR7/XIP
+env_netx4000_blinki_cr7_sqirom = atEnv.NETX4000_RELAXED.Clone()
+env_netx4000_blinki_cr7_sqirom.Append(CPPPATH = astrIncludePaths)
+env_netx4000_blinki_cr7_sqirom.Replace(LDFILE = 'src/netx4000/netx4000_cr7_sqirom.ld')
+src_netx4000_blinki_cr7_sqirom = env_netx4000_blinki_cr7_sqirom.SetBuildPath('targets/netx4000_cr7_sqirom', 'src', sources)
+elf_netx4000_blinki_cr7_sqirom = env_netx4000_blinki_cr7_sqirom.Elf('targets/netx4000_cr7_sqirom/netx4000_blinki_cr7_sqirom.elf', src_netx4000_blinki_cr7_sqirom + env_netx4000_blinki_cr7_sqirom['PLATFORM_LIBRARY'])
+txt_netx4000_blinki_cr7_sqirom = env_netx4000_blinki_cr7_sqirom.ObjDump('targets/netx4000_cr7_sqirom/netx4000_blinki_cr7_sqirom.txt', elf_netx4000_blinki_cr7_sqirom, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+
+
 # Blinki for one of the CA9 cores.
 env_netx4000_blinki_ca9 = atEnv.NETX4000_RELAXED.Clone()
 env_netx4000_blinki_ca9.Append(CPPPATH = astrIncludePaths)
@@ -137,6 +146,8 @@ bb3_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/c
 bb4_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx4000_ca9core1_spi_intram.bin', 'src/netx4000/CA9core1_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9}))
 bb5_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core1/netx.rom', 'src/netx4000/CA9core1_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9}))
 
+# hboot image: run on CR7 from SQIROM
+bb6_netx4000_sqirom = env_netx4000_blinki_cr7_sqirom.HBootImage('targets/blinki_netx4000_cr7_sqirom.bin', 'src/netx4000/CR7_to_SQIROM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7_sqirom}))
 
 
 env_netx500_intram = atEnv.NETX500.Clone()
