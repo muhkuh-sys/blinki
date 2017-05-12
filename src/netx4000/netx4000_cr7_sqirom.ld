@@ -21,7 +21,7 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.code ORIGIN(SQIROM) + 128 :
+	.code ORIGIN(SQIROM) + 1024 :
 	{
 		KEEP(*(.init_code))
 		*(.text .rodata .rodata*)

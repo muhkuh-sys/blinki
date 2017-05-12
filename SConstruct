@@ -147,8 +147,12 @@ bb4_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/blinki_netx400
 bb5_netx4000_intram = env_netx4000_blinki_ca9.HBootImage('targets/mmc/netx4000/ca9core1/netx.rom', 'src/netx4000/CA9core1_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7OpenFirewalls': elf_netx4000_cr7_openfirewalls[0], 'tElfCA9core1': elf_netx4000_blinki_ca9}))
 
 # hboot image: run on CR7 from SQIROM
-bb6_netx4000_sqirom = env_netx4000_blinki_cr7_sqirom.HBootImage('targets/blinki_netx4000_cr7_sqirom.bin', 'src/netx4000/CR7_to_SQIROM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7_sqirom}))
-
+# includes snippet to correct the MPU configuration
+bb6_netx4000_sqirom_mpu = env_netx4000_blinki_cr7_sqirom.HBootImage(
+	'targets/blinki_netx4000_cr7_mpu_sqirom.bin', 
+	'src/netx4000/CR7_to_SQIROM_mpu_sqirom.xml', 
+	HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7_sqirom}), 
+	HBOOTIMAGE_SNIPLIB_SEARCHPATHS=['src/netx4000/snippets'])
 
 env_netx500_intram = atEnv.NETX500.Clone()
 env_netx500_intram.Append(CPPPATH = astrIncludePaths)

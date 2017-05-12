@@ -2,7 +2,7 @@
 <HBootImage type="REGULAR" device="SQIROM0">
 	<Chunks>
 
-		<Skip absolute="0x78" />
+		<Skip absolute="0x3f8" />
 		
 		<!-- Set up the SQIROM0 area and enter the program. -->
 		<XIP>
