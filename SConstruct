@@ -152,7 +152,7 @@ bb6_netx4000_sqirom_mpu = env_netx4000_blinki_cr7_sqirom.HBootImage(
 	'targets/blinki_netx4000_cr7_mpu_sqirom.bin', 
 	'src/netx4000/CR7_to_SQIROM_mpu_sqirom.xml', 
 	HBOOTIMAGE_KNOWN_FILES=dict({'tElfCR7': elf_netx4000_blinki_cr7_sqirom}), 
-	HBOOTIMAGE_SNIPLIB_SEARCHPATHS=['src/netx4000/snippets'])
+	HBOOTIMAGE_SNIPLIB_SEARCHPATHS=['sniplib'])
 
 env_netx500_intram = atEnv.NETX500.Clone()
 env_netx500_intram.Append(CPPPATH = astrIncludePaths)
