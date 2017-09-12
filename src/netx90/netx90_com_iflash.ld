@@ -24,7 +24,7 @@ MEMORY
 {
 	ASSERT_EMPTY(rwx)  : ORIGIN = 0x00000000, LENGTH = 0
 
-	INTRAM(rx)         : ORIGIN = 0x000200C0, LENGTH = 0x0001FF40
+	INTRAM(rwx)         : ORIGIN = 0x000200C0, LENGTH = 0x0001FF40
 	IFLASH(rx)         : ORIGIN = 0x00101000, LENGTH = 0x0007F000
 }
 
@@ -42,7 +42,8 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.code ORIGIN(IFLASH) :
+  /* reserve 8 bytes for chunk ID and chunk length; each 32bit wide */
+	.code ORIGIN(IFLASH) + 8 :
 	{
 		KEEP(*(.header))
 		*(.init_code)

@@ -24,8 +24,8 @@ MEMORY
 {
 	ASSERT_EMPTY(rwx)  : ORIGIN = 0x00000000, LENGTH = 0
 
-	INTRAM(rx)         : ORIGIN = 0x000200C0, LENGTH = 0x0001FF40
-	SQIROM(rx)         : ORIGIN = 0x64001000, LENGTH = 0x03fff000
+	INTRAM(rwx)        : ORIGIN = 0x000200C0, LENGTH = 0x0001FF40
+	SQIROM(rx)         : ORIGIN = 0x64002000, LENGTH = 0x03FFE000
 }
 
 
@@ -42,7 +42,8 @@ SECTIONS
 	} >ASSERT_EMPTY
 
 
-	.code ORIGIN(SQIROM) :
+  /* reserve 8 bytes for chunk ID and chunk length; each 32bit wide */
+	.code ORIGIN(SQIROM) + 8:
 	{
 		KEEP(*(.header))
 		*(.init_code)
