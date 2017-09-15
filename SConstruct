@@ -198,6 +198,11 @@ elf_netx90_com_comled_intram = env_netx90_com_comled_intram.Elf('targets/netx90_
 txt_netx90_com_comled_intram = env_netx90_com_comled_intram.ObjDump('targets/netx90_com_comled_intram/blinki_netx90_com_comled_intram.txt', elf_netx90_com_comled_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
 bb0_netx90_com_comled_intram = env_netx90_com_comled_intram.HBootImage('targets/blinki_netx90_com_comled_intram.bin', 'src/netx90/COM_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_intram}))
 
+# A large boot image with a 512 KB SKIP chunk at the beginning that starts the APP CPU and then loads a COM LED blinki for the COM CPU to intram.
+bb1_netx90_com_comled_intram = env_netx90_com_comled_intram.HBootImage('targets/blinki_netx90_com_comled_intram_app_512k.bin', 'src/netx90/COM_to_INTRAM_ACTIVATE_APP_512K.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_intram}))
+
+
+
 # Blinki for the netX90 application CPU.
 env_netx90_app = atEnv.NETX90_MPW_APP.Clone()
 env_netx90_app.Append(CPPPATH = astrIncludePaths)
