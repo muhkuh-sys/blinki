@@ -201,6 +201,9 @@ bb0_netx90_com_comled_intram = env_netx90_com_comled_intram.HBootImage('targets/
 # A large boot image with a 512 KB SKIP chunk at the beginning that starts the APP CPU and then loads a COM LED blinki for the COM CPU to intram.
 bb1_netx90_com_comled_intram = env_netx90_com_comled_intram.HBootImage('targets/blinki_netx90_com_comled_intram_app_512k.bin', 'src/netx90/COM_to_INTRAM_ACTIVATE_APP_512K.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_intram}))
 
+# A boot image that starts the APP CPU and then loads a COM LED blinki for the COM CPU to intram.
+# Includes with two 'breakpoints' before starting the APP CPU and before starting the blinki on the COM CPU.
+bb2_netx90_com_comled_intram = env_netx90_com_comled_intram.HBootImage('targets/blinki_netx90mpw_com_comled_intram_app_bpdemo.bin', 'src/netx90/netx90mpw_bp_COM_to_INTRAM_ACTIVATE_APP.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_comled_intram}))
 
 
 # Blinki for the netX90 application CPU.
