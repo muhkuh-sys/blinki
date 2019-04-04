@@ -5,7 +5,7 @@
 		<Data>
 			<File name="@tElfCOM" />
 		</Data>
-		<Execute>
+		<Execute activate_debugging="true" >
 			<File name="@tElfCOM" />
 		</Execute>
 	</Chunks>
