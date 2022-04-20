@@ -22,32 +22,36 @@
     .func start, start
     .type start, STT_FUNC
 start:
+	push    {r0, r1, r2, r3, lr}
+
+	/* Save the stack position of the ROM. */
+	mov     r1, sp
+
 	@ Set own stack position.
 	ldr     r2, =stack_top
 	mov     sp, r2
 
-#if ASIC_TYP==ASIC_TYP_NETX10
-	@ copy the data section
-	ldr     r2, =__data_loadaddr__
-	ldr     r3, =__data_start__
-	ldr     r4, =__data_end__
-copy_data:
-	cmp     r3, r4
-	ldrlo   r5, [r2], #4
-	strlo   r5, [r3], #4
-	blo     copy_data
-#endif
+	/* Save the ROM stack position. */
+	push    {r1}
 
 	@ Clear the .bss section (zero init).
-	mov     r2, #0
-	ldr     r3, =__bss_start__
-	ldr     r4, =__bss_end__
+	mov     r1, #0
+	ldr     r2, =__bss_start__
+	ldr     r3, =__bss_end__
 clear_bss:
-	str     r2, [r3], #4
-	cmp     r3, r4
+	str     r1, [r2], #4
+	cmp     r2, r3
 	bmi     clear_bss
 
-	b       blinki_main
+	blx     blinki_main
+	
+	/* Restore the ROM stack position. */
+	pop     {r1}
+	mov     sp, r1
+
+	/* Restore the rest of the registers. */
+	pop     {r0, r1, r2, r3, lr}
+	bx      lr
     .endfunc
 
 @--------------------------------------

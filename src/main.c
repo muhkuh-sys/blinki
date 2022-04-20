@@ -64,9 +64,17 @@ void blinki_main(void *pvBootBlock __attribute__((unused)), unsigned long ulBoot
 	rdy_run_setLEDs(RDYRUN_OFF);
 
 	rdy_run_blinki_init(&tBlinkiHandle, 0x00000055, 0x00000150);
-	while(1)
+	
+	/* blink for 3 seconds and return. */
+	unsigned long ulStartTime_ms;
+	unsigned long ulCurrentTime_ms;
+	
+	ulStartTime_ms = systime_get_ms();
+	ulCurrentTime_ms = ulStartTime_ms;
+	while(ulCurrentTime_ms-ulStartTime_ms < 3000)
 	{
 		rdy_run_blinki(&tBlinkiHandle);
-		uprintf("blinki at %dms.\n", systime_get_ms());
+		ulCurrentTime_ms = systime_get_ms();
+		uprintf("blinki at %dms.\n", ulCurrentTime_ms);
 	};
 }
