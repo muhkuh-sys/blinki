@@ -108,5 +108,5 @@ src_netx90_com_intram = env_netx90_com_intram.SetBuildPath('targets/netx90_retur
 elf_netx90_com_intram = env_netx90_com_intram.Elf('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.elf', src_netx90_com_intram + env_netx90_com_intram['PLATFORM_LIBRARY'])
 bin_netx90_com_intram = env_netx90_com_intram.ObjCopy('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.bin', elf_netx90_com_intram)
 txt_netx90_com_intram = env_netx90_com_intram.ObjDump('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.txt', elf_netx90_com_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
-bb0_netx90_com_intram = env_netx90_com_intram.HBootImage('targets/blinki_return_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_intram}))
+bb0_netx90_com_intram = env_netx90_com_intram.HBootImage('targets/blinki_return_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM_htbl.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_intram}))
 
