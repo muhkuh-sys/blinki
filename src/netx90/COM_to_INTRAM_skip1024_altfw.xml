@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<HBootImage type="ALTERNATIVE">
+	<Chunks>
+		<Skip relative="1024" />
+		<!-- Load Programm for the COM CPU and start afterwards -->
+		<Data>
+			<File name="@tElfCOM" />
+		</Data>
+		<Execute activate_debugging="true" >
+			<File name="@tElfCOM" />
+		</Execute>
+	</Chunks>
+</HBootImage>
+

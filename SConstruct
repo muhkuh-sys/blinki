@@ -65,6 +65,13 @@ sources = """
 	src/main.c
 """
 
+sources_return = """
+	src/hboot_dpm.c
+	src/header.c
+	src/init.S
+	src/main_return.c
+"""
+
 sources_netx90_app = """
 	src/hboot_dpm.c
 	src/header.c
@@ -99,14 +106,25 @@ sources_cr7_openfirewalls = """
 # The list of include folders. Here it is used for all files.
 astrIncludePaths = ['src', '#platform/src', '#platform/src/lib', '#targets/version']
 
-
-# Blinki for the netX90 communication CPU.
 env_netx90_com_intram = atEnv.NETX90.Clone()
 env_netx90_com_intram.Append(CPPPATH = astrIncludePaths)
 env_netx90_com_intram.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
-src_netx90_com_intram = env_netx90_com_intram.SetBuildPath('targets/netx90_return_com_intram', 'src', sources)
-elf_netx90_com_intram = env_netx90_com_intram.Elf('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.elf', src_netx90_com_intram + env_netx90_com_intram['PLATFORM_LIBRARY'])
-bin_netx90_com_intram = env_netx90_com_intram.ObjCopy('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.bin', elf_netx90_com_intram)
-txt_netx90_com_intram = env_netx90_com_intram.ObjDump('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.txt', elf_netx90_com_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
-bb0_netx90_com_intram = env_netx90_com_intram.HBootImage('targets/blinki_return_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM_htbl.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_intram}))
+src_netx90_com_intram = env_netx90_com_intram.SetBuildPath('targets/netx90_com_intram', 'src', sources)
+elf_netx90_com_intram = env_netx90_com_intram.Elf('targets/netx90_com_intram/blinki_netx90_com_intram.elf', src_netx90_com_intram + env_netx90_com_intram['PLATFORM_LIBRARY'])
+bin_netx90_com_intram = env_netx90_com_intram.ObjCopy('targets/netx90_com_intram/blinki_netx90_com_intram.bin', elf_netx90_com_intram)
+txt_netx90_com_intram = env_netx90_com_intram.ObjDump('targets/netx90_com_intram/blinki_netx90_com_intram.txt', elf_netx90_com_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_com_intram = env_netx90_com_intram.HBootImage('targets/blinki_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM_skip1024.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_intram}))
 
+bb1_netx90_com_intram_alternative = env_netx90_com_intram.HBootImage('targets/blinki_netx90_com_intram_altfw.bin', 'src/netx90/COM_to_INTRAM_skip1024_altfw.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_com_intram}))
+
+# Blinki for the netX90 communication CPU.
+env_netx90_return_com_intram = atEnv.NETX90.Clone()
+env_netx90_return_com_intram.Append(CPPPATH = astrIncludePaths)
+env_netx90_return_com_intram.Replace(LDFILE = 'src/netx90/netx90_com_intram.ld')
+src_netx90_return_com_intram = env_netx90_return_com_intram.SetBuildPath('targets/netx90_return_com_intram', 'src', sources_return)
+elf_netx90_return_com_intram = env_netx90_return_com_intram.Elf('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.elf', src_netx90_return_com_intram + env_netx90_return_com_intram['PLATFORM_LIBRARY'])
+bin_netx90_return_com_intram = env_netx90_return_com_intram.ObjCopy('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.bin', elf_netx90_return_com_intram)
+txt_netx90_return_com_intram = env_netx90_return_com_intram.ObjDump('targets/netx90_return_com_intram/blinki_return_netx90_com_intram.txt', elf_netx90_return_com_intram, OBJDUMP_FLAGS=['--disassemble', '--source', '--all-headers', '--wide'])
+bb0_netx90_return_com_intram = env_netx90_return_com_intram.HBootImage('targets/blinki_return_netx90_com_intram.bin', 'src/netx90/COM_to_INTRAM_skip1024.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_return_com_intram}))
+
+bb1_netx90_return_com_intram_alternative = env_netx90_return_com_intram.HBootImage('targets/blinki_return_netx90_com_intram_altfw.bin', 'src/netx90/COM_to_INTRAM_skip1024_altfw.xml', HBOOTIMAGE_KNOWN_FILES=dict({'tElfCOM': elf_netx90_return_com_intram}))
